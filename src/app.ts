@@ -1,9 +1,11 @@
 import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
 import "@babylonjs/loaders/glTF";
-import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, Mesh, MeshBuilder, StandardMaterial, Color3 } from "@babylonjs/core";
+import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, Mesh, MeshBuilder, StandardMaterial, Color3, TransformNode } from "@babylonjs/core";
 import { AdvancedDynamicTexture, Button, TextBlock, Rectangle } from "@babylonjs/gui";
 import { Control } from "@babylonjs/gui/2D/controls/control";
+import WaveSpawnerBehavior, { EnemyType } from "./WaveSpawnerBehavior";
+import UpdateableNodeManager from "./UpdateableNodeManager";
 
 /*
     This class has a position and generates every frame some enemies moving towards the center of the world
@@ -26,8 +28,8 @@ class Spawner {
         object.position.x = this._location.x
         object.position.y = this._location.y
         object.position.y = this._location.z
-        const sphereEnemy = new Enemy(this._name, object, 0.1);
-        objects.push(sphereEnemy);
+        //const sphereEnemy = new Enemy(this._name, object, 0.1);
+        //objects.push(sphereEnemy);
         // Spawn the enemy at the spawner's location
         }, this._interval * 1000);
     }
@@ -37,34 +39,10 @@ class Spawner {
     }
 }
 
-enum EnemyType {
-    SphereEnemy,
-    CubeEnemy,
-}
-
-type SpawnInfo = {
-    parameters: Record<string, any>,
-    material: StandardMaterial | null,
-    type: EnemyType
-}
-
-class Enemy {
-    constructor(public name: string, public object: Mesh, public _speed: number) {
-    }
-
-    runTowardsCenter(): void {
-        const targetPosition = new Vector3(0, 0, 0);
-        this.object.lookAt(targetPosition);
-        const direction = targetPosition.subtract(this.object.position).normalize();
-        this.object.position.x += direction.x * this._speed;
-        this.object.position.z += direction.z * this._speed;
-    }
-}
-
 class Tower {
     private _timerId: any;
 
-    public target: null | Enemy = null;
+    public target: null | TransformNode = null;
     constructor(private _name: string, public object: Mesh, private _attackSpeed: number, private _towerAttackRadius: number) {
     }
     get towerAttackRadius(){
@@ -83,7 +61,7 @@ class Tower {
             }, this.object._scene);
             rockMesh.material = rockMaterial;
             
-            const targetPosition = this.target.object.position;
+            const targetPosition = this.target.position;
             const direction = targetPosition.subtract(this.object.position).normalize();
             console.log(direction);
             const rock = new Projectile("rock", rockMesh, 20, 10, direction);
@@ -91,7 +69,7 @@ class Tower {
             }, 1000 - this._attackSpeed * 100);
     }
 
-    changeTarget(target: Enemy) {
+    changeTarget(target: TransformNode) {
         clearInterval(this._timerId);
         this.target = target;
         this.attackTarget()
@@ -108,48 +86,6 @@ class Projectile {
     }
 }
 
-class WaveSpawner {
-    private _timerId: any;
-    private _enemiesCount: number = 0; // keep track of the number of enemies
-    private _enemiesInWave: number = 0; // keep track of the number of enemies
-
-    constructor(private _location: { x: number, y: number, z: number }, private _interval: number, private _scene: Scene) {
-    }
-
-    start(enemies: Array<SpawnInfo>): void {
-        let enemyIndex = 0;
-        this._enemiesInWave = enemies.length;
-        this._timerId = setInterval(() => {
-            if (enemyIndex < enemies.length) {
-                // spawn the enemy and increase the counter
-                const enemyInfo = enemies[enemyIndex];
-                let object: Mesh;
-                if (enemyInfo.type == EnemyType.SphereEnemy) {
-                    object = MeshBuilder.CreateSphere("sphere", enemyInfo.parameters, this._scene);
-                }
-                else if (enemyInfo.type == EnemyType.CubeEnemy) {
-                    object = MeshBuilder.CreateBox("square", enemyInfo.parameters, this._scene);
-                }
-                if (enemyInfo.material) {
-                    object.material = enemyInfo.material;
-                }
-                object.position.x = this._location.x
-                object.position.y = this._location.y
-                object.position.z = this._location.z
-                const enemy = new Enemy("enemy", object, 0.1);
-                objects.push(enemy);
-                enemyIndex++;
-
-                // update the text block with the new enemy count
-                this._enemiesCount++;
-                enemyCountText.text = `Enemies: ${this._enemiesCount}`;
-                enemiesInWaveText.text = `Enemies in the Wave: ${this._enemiesInWave}`;
-            } else {
-                clearInterval(this._timerId);
-            }
-        }, this._interval * 1000);
-    }
-}
 
 class App {
     constructor() {
@@ -174,8 +110,8 @@ class App {
         const enemyMaterial = new StandardMaterial("enemyMaterial", scene);
         enemyMaterial.diffuseColor = new Color3(0, 1, 1);
 
-        const spawner = new Spawner("sphere", { diameter: 1 }, { x: 20, y: 10, z: 0 }, 1, scene, enemyMaterial); // spawn an enemy every second
-        spawner.start(); // start spawning enemies
+        //const spawner = new Spawner("sphere", { diameter: 1 }, { x: 20, y: 10, z: 0 }, 1, scene, enemyMaterial); // spawn an enemy every second
+        //spawner.start(); // start spawning enemies
 
         const sphereEnemy = {parameters: { diameter: 1 }, material: enemyMaterial, type: EnemyType.SphereEnemy};
         const cubeEnemy = {parameters: {width: 0.5, depth: 0.5, height: 2.5}, material: enemyMaterial, type: EnemyType.CubeEnemy};
@@ -188,8 +124,11 @@ class App {
             [sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy],
         ]
 
-        const spawner2 = new WaveSpawner({ x: -20, y: 0, z: 0 }, 1, scene); 
-        spawner2.start(waves[0]);
+        const spawner2 = new TransformNode("waveSpawner", scene);
+        spawner2.position.x = -20;
+        const spawnerBehavior = new WaveSpawnerBehavior();
+        spawnerBehavior.enemies = waves[0];
+        spawner2.addBehavior(spawnerBehavior);
 
         const towerMaterial = new StandardMaterial("towerMaterial", scene);
         towerMaterial.diffuseColor = new Color3(1, 0, 0); 
@@ -221,23 +160,24 @@ class App {
         // run the main render loop
         engine.runRenderLoop(() => {
             const dt = engine.getDeltaTime() / 1000;
+            UpdateableNodeManager.instance.update(dt);
             for (const object1 of objects) {
                 if (object1 instanceof Tower) {
                     const tower = object1 as Tower;
                     if (object1.target == null) {
                         for (const object2 of objects) {
-                            if (object2 instanceof Enemy) {
-                                const enemy = object2 as Enemy;
-                                if (Math.abs(tower.object.position.x - enemy.object.position.x) <= tower.towerAttackRadius && Math.abs(tower.object.position.y - enemy.object.position.y) <= tower.towerAttackRadius) {
-                                    tower.changeTarget(enemy);
-                                }
-                            }
+                            //if (object2 instanceof Enemy) {
+                            //    const enemy = object2 as Enemy;
+                            //    if (Math.abs(tower.object.position.x - enemy.object.position.x) <= tower.towerAttackRadius && Math.abs(tower.object.position.y - enemy.object.position.y) <= tower.towerAttackRadius) {
+                            //        tower.changeTarget(enemy);
+                            //    }
+                            //}
                         }
                     }
                 }
-                else if (object1 instanceof Enemy){
-                    object1.runTowardsCenter();
-                }
+                //else if (object1 instanceof Enemy){
+                //    //object1.runTowardsCenter();
+                //}
                 else if (object1 instanceof Projectile) {
                     object1.move(dt);
                 }
