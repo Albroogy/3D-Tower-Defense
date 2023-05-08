@@ -4,88 +4,14 @@ import "@babylonjs/loaders/glTF";
 import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, Mesh, MeshBuilder, StandardMaterial, Color3, TransformNode } from "@babylonjs/core";
 import { AdvancedDynamicTexture, Button, TextBlock, Rectangle } from "@babylonjs/gui";
 import { Control } from "@babylonjs/gui/2D/controls/control";
-import WaveSpawnerBehavior, { EnemyType } from "./WaveSpawnerBehavior";
+import WaveSpawnerBehavior, { EnemyType } from "./Behavior/WaveSpawnerBehavior";
 import UpdateableNodeManager from "./UpdateableNodeManager";
-
-/*
-    This class has a position and generates every frame some enemies moving towards the center of the world
-*/
-
-const objects = [];
-
-class Spawner {
-    private _timerId: any;
-  
-    constructor(private _name: string, private _parameters: Record<string, any>, private _location: { x: number, y: number, z: number }, private _interval: number, private _scene: Scene, private _material: StandardMaterial | null = null) {
-    }
-  
-    start(): void {
-        this._timerId = setInterval(() => {
-        const object: Mesh = MeshBuilder.CreateSphere("sphere", this._parameters, this._scene);
-        if (this._material) {
-            object.material = this._material;
-        }
-        object.position.x = this._location.x
-        object.position.y = this._location.y
-        object.position.y = this._location.z
-        //const sphereEnemy = new Enemy(this._name, object, 0.1);
-        //objects.push(sphereEnemy);
-        // Spawn the enemy at the spawner's location
-        }, this._interval * 1000);
-    }
-  
-    stop(): void {
-        clearInterval(this._timerId);
-    }
-}
-
-class Tower {
-    private _timerId: any;
-
-    public target: null | TransformNode = null;
-    constructor(private _name: string, public object: Mesh, private _attackSpeed: number, private _towerAttackRadius: number) {
-    }
-    get towerAttackRadius(){
-        return this._towerAttackRadius;
-    }
-
-    attackTarget(): void { 
-        this._timerId = setInterval(() => {
-            const rockMaterial = new StandardMaterial("rockMaterial", this.object._scene);
-            rockMaterial.diffuseColor = new Color3(1, 0, 1); 
-            
-            const rockMesh = MeshBuilder.CreateBox("rock", {
-                width: 0.1,
-                depth: 0.25,
-                height: 0.25
-            }, this.object._scene);
-            rockMesh.material = rockMaterial;
-            
-            const targetPosition = this.target.position;
-            const direction = targetPosition.subtract(this.object.position).normalize();
-            console.log(direction);
-            const rock = new Projectile("rock", rockMesh, 20, 10, direction);
-            objects.push(rock);
-            }, 1000 - this._attackSpeed * 100);
-    }
-
-    changeTarget(target: TransformNode) {
-        clearInterval(this._timerId);
-        this.target = target;
-        this.attackTarget()
-    }
-}
-
-class Projectile {
-    constructor(private _name: string, public object: Mesh, private _speed: number, private _damage: number, private _direction: Vector3) {
-    }
-
-    move(dt: number): void {
-        this.object.position.x += this._direction.x * this._speed * dt;
-        this.object.position.z += this._direction.z * this._speed * dt;
-    }
-}
-
+import EnemyBehavior from "./Behavior/EnemyBehavior";
+import { TagBehavior } from "./Behavior/TagBehavior";
+import UpdateableNode from "./UpdateableNode";
+import TowerBehavior from "./Behavior/TowerBehaviour";
+import { BehaviorName, objects, Tag, ElementType } from "./Gobal";
+import CollisionSystem from "./Systems/CollisionSystem";
 
 class App {
     constructor() {
@@ -113,8 +39,8 @@ class App {
         //const spawner = new Spawner("sphere", { diameter: 1 }, { x: 20, y: 10, z: 0 }, 1, scene, enemyMaterial); // spawn an enemy every second
         //spawner.start(); // start spawning enemies
 
-        const sphereEnemy = {parameters: { diameter: 1 }, material: enemyMaterial, type: EnemyType.SphereEnemy};
-        const cubeEnemy = {parameters: {width: 0.5, depth: 0.5, height: 2.5}, material: enemyMaterial, type: EnemyType.CubeEnemy};
+        const sphereEnemy = {parameters: { diameter: 1 }, material: enemyMaterial, type: EnemyType.SphereEnemy, health: 2, element: ElementType.Air};
+        const cubeEnemy = {parameters: {width: 0.5, depth: 0.5, height: 2.5}, material: enemyMaterial, type: EnemyType.CubeEnemy, health: 3, element: ElementType.Air};
 
         const waves = [
             [sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy],
@@ -127,23 +53,30 @@ class App {
         const spawner2 = new TransformNode("waveSpawner", scene);
         spawner2.position.x = -20;
         const spawnerBehavior = new WaveSpawnerBehavior();
-        spawnerBehavior.enemies = waves[0];
+        spawnerBehavior.waveInfo = waves;
         spawner2.addBehavior(spawnerBehavior);
+
+        const tower = new TransformNode("tower", scene);
+        tower.position.y = 1.25;
+        const towerBehavior = new TowerBehavior(5, 10, ElementType.Fire);
+        const tagBehavior = new TagBehavior([Tag.Tower]);
+        tower.addBehavior(towerBehavior);
+        tower.addBehavior(tagBehavior);
 
         const towerMaterial = new StandardMaterial("towerMaterial", scene);
         towerMaterial.diffuseColor = new Color3(1, 0, 0); 
         
-        const tower = MeshBuilder.CreateBox("tower1", {
+        const towerMesh = MeshBuilder.CreateBox("towerMesh1", {
             width: 0.5,
             depth: 0.5,
             height: 2.5
         }, scene);
-        tower.position.y = 1.25;
-        tower.material = towerMaterial;
+        towerMesh.position.y = 1.25;
+        towerMesh.material = towerMaterial;
 
-        const towerObject = new Tower("tower", tower, 5, 10);
+        towerMesh.setParent(tower);
 
-        objects.push(towerObject);
+        objects.push(tower);
 
         // hide/show the Inspector
         window.addEventListener("keydown", (ev) => {
@@ -162,24 +95,34 @@ class App {
             const dt = engine.getDeltaTime() / 1000;
             UpdateableNodeManager.instance.update(dt);
             for (const object1 of objects) {
-                if (object1 instanceof Tower) {
-                    const tower = object1 as Tower;
-                    if (object1.target == null) {
-                        for (const object2 of objects) {
-                            //if (object2 instanceof Enemy) {
-                            //    const enemy = object2 as Enemy;
-                            //    if (Math.abs(tower.object.position.x - enemy.object.position.x) <= tower.towerAttackRadius && Math.abs(tower.object.position.y - enemy.object.position.y) <= tower.towerAttackRadius) {
-                            //        tower.changeTarget(enemy);
-                            //    }
-                            //}
+                if (object1.getBehaviorByName(BehaviorName.Tag) != null) {
+                    if (object1.getBehaviorByName(BehaviorName.Tag).tags.includes(Tag.Tower)) {
+                        const tower = object1 as UpdateableNode;
+                        const towerBehavior = object1.getBehaviorByName(BehaviorName.Tower) as TowerBehavior;
+                        if (!towerBehavior.target) {
+                            for (const object2 of objects) {
+                                if (object2.getBehaviorByName(BehaviorName.Tag) != null) {
+                                    if (object2.getBehaviorByName(BehaviorName.Tag).tags.includes(Tag.Enemy)) {
+                                        const enemy = object2 as UpdateableNode;
+                                        if (Math.abs(tower.position.x - enemy.position.x) <= towerBehavior.towerAttackRadius && Math.abs(tower.position.y - enemy.position.y) <= towerBehavior.towerAttackRadius) {
+                                            towerBehavior.changeTarget(enemy);
+                                        }
+                                     }
+                                }
+                            }
                         }
                     }
-                }
-                //else if (object1 instanceof Enemy){
-                //    //object1.runTowardsCenter();
-                //}
-                else if (object1 instanceof Projectile) {
-                    object1.move(dt);
+                    if (object1.getBehaviorByName(BehaviorName.Tag).tags.includes(Tag.Projectile)) {
+                        const tower = object1 as UpdateableNode;
+                        for (const object2 of objects) {
+                            if (object2.getBehaviorByName(BehaviorName.Tag) != null) {
+                                if (object2.getBehaviorByName(BehaviorName.Tag).tags.includes(Tag.Enemy)) {
+                                    const enemy = object2 as UpdateableNode;
+                                    CollisionSystem.checkObjectsColliding(tower, enemy);
+                                    }
+                            }
+                        }
+                    }
                 }
             }
             //sphere.position.x += dt / 1000 * 5;
@@ -189,21 +132,21 @@ class App {
 }
 new App();
 
-// create the text block and add it to the GUI
-const gui = AdvancedDynamicTexture.CreateFullscreenUI("UI");
-const enemyCountText = new TextBlock("enemyCountText", "Enemies: 0");
-enemyCountText.color = "white";
-enemyCountText.fontSize = 48;
-enemyCountText.top = "20px";
-enemyCountText.left = "20px";
-gui.addControl(enemyCountText);
+// // create the text block and add it to the GUI
+// const gui = AdvancedDynamicTexture.CreateFullscreenUI("UI");
+// const enemyCountText = new TextBlock("enemyCountText", "Enemies: 0");
+// enemyCountText.color = "white";
+// enemyCountText.fontSize = 48;
+// enemyCountText.top = "20px";
+// enemyCountText.left = "20px";
+// gui.addControl(enemyCountText);
 
-const enemiesInWaveText = new TextBlock("enemiesInWaveText", "Enemies in the Wave: 0");
-enemiesInWaveText.color = "white";
-enemiesInWaveText.fontSize = 48;
-enemiesInWaveText.top = "60px"; 
-enemiesInWaveText.left = "20px";
-gui.addControl(enemiesInWaveText);
+// const enemiesInWaveText = new TextBlock("enemiesInWaveText", "Enemies in the Wave: 0");
+// enemiesInWaveText.color = "white";
+// enemiesInWaveText.fontSize = 48;
+// enemiesInWaveText.top = "60px"; 
+// enemiesInWaveText.left = "20px";
+// gui.addControl(enemiesInWaveText);
 
 // const createCardUI = (title: string, content: string, buttonText: string, buttonAction: () => void) => {
 //     // Create the GUI texture

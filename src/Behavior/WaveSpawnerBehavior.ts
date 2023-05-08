@@ -1,7 +1,9 @@
 import { Mesh, MeshBuilder, StandardMaterial, TransformNode, Vector3 } from "@babylonjs/core";
 import EnemyBehavior from "./EnemyBehavior";
-import UpdateableBehavior from "./UpdateableBehavior";
-import UpdateableNode from "./UpdateableNode";
+import { BehaviorName, ElementType, objects, Tag } from "../Gobal";
+import { TagBehavior } from "./TagBehavior";
+import UpdateableBehavior from "../UpdateableBehavior";
+import UpdateableNode from "../UpdateableNode";
 
 export enum EnemyType {
     SphereEnemy,
@@ -11,24 +13,33 @@ export enum EnemyType {
 export type SpawnInfo = {
     parameters: Record<string, any>,
     material: StandardMaterial | null,
-    type: EnemyType
+    type: EnemyType,
+    health: number,
+    element: ElementType
 }
 
 export default class WaveSpawner extends UpdateableBehavior {
+    public name = BehaviorName.WaveSpawner;
+
     private _timerId: any;
     private _enemiesCount: number = 0; // keep track of the number of enemies
     private _enemiesInWave: number = 0; // keep track of the number of enemies
 
-    public interval: number;
-    public enemies: Array<SpawnInfo>;
+    public interval: number = 1;
+    public waveInfo: Array<Array<SpawnInfo>>;
+    
+    public currentWave: number = 0;
 
     public attach(spawner: TransformNode): void {
-        const position = spawner.position;
+        this.spawnWave(spawner);
+    }
+
+    public spawnWave(spawner: TransformNode): void {
         let enemyIndex = 0;
         this._timerId = setInterval(() => {
-            if (enemyIndex < this.enemies.length) {
+            if (enemyIndex < this.waveInfo[this.currentWave].length) {
                 // spawn the enemy and increase the counter
-                const enemyInfo = this.enemies[enemyIndex];
+                const enemyInfo = this.waveInfo[this.currentWave][enemyIndex];
                 let enemyContainerNode = new UpdateableNode("enemy", spawner.getScene());
                 let mesh: Mesh;
                 if (enemyInfo.type == EnemyType.SphereEnemy) {
@@ -44,11 +55,19 @@ export default class WaveSpawner extends UpdateableBehavior {
                 enemyContainerNode.setParent(spawner);
                 // Setting the parent resets the position of the child to the transwformed position
                 enemyContainerNode.setPositionWithLocalVector(Vector3.Zero());
-                const enemyBehavior = new EnemyBehavior(1);
+                const enemyBehavior = new EnemyBehavior(3, enemyInfo.element, enemyInfo.health);
+                const tagBehavior = new TagBehavior([Tag.Enemy]);
                 enemyContainerNode.addBehavior(enemyBehavior);
+                enemyContainerNode.addBehavior(tagBehavior);
+                objects.push(enemyContainerNode);
                 enemyIndex++;
             } else {
                 clearInterval(this._timerId);
+                this.currentWave++;
+                this.spawnWave(spawner);
+                // const curriedSpawnWave = this.spawnWave.bind(spawner);
+                // setTimeout(curriedSpawnWave, 3000);
+
             }
         }, this.interval * 1000);
     }
