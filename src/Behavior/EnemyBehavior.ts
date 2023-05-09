@@ -15,6 +15,7 @@ export default class EnemyBehavior extends UpdateableBehavior {
         super();
         this.speed = speed;
         this._health = health;
+        this.element = element;
     }
 
     public attach(target: TransformNode): void {

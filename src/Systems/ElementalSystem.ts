@@ -54,11 +54,9 @@ export default class CollisionSystem {
             break;
           case ElementType.Metal:
             switch (Element2) {
-              case ElementType.Fire:
               case ElementType.Earth:
                 multiplier = 0.5; // Metal resists Fire and Earth
                 break;
-              case ElementType.Water:
               case ElementType.Air:
                 multiplier = 2; // Metal is weak to Water and Air
                 break;

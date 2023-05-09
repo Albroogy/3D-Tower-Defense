@@ -1,5 +1,5 @@
 import { Color3, Mesh, MeshBuilder, Space, StandardMaterial, TransformNode, Vector3 } from "@babylonjs/core";
-import { BehaviorName, objects, Tag, ElementType } from "../Gobal";
+import { BehaviorName, objects, Tag, ElementType, ElementColor } from "../Gobal";
 import ProjectileBehavior from "./ProjectileBehavior";
 import { TagBehavior } from "./TagBehavior";
 import UpdateableBehavior from "../UpdateableBehavior";
@@ -13,17 +13,26 @@ export default class TowerBehavior extends UpdateableBehavior {
     private _timerId: any;
 
     public target: null | TransformNode = null;
-    constructor(private _attackSpeed: number, private _towerAttackRadius: number, public element: ElementType) {
+    constructor(private _attackSpeed: number, private _towerAttackRadius: number, public element: ElementType, public mesh: Mesh) {
         super();
     }
 
     public attach(target: TransformNode): void {
         this._node = target;
+
+        const towerMaterial = new StandardMaterial("towerMaterial", this._node.getScene());
+        towerMaterial.diffuseColor = ElementColor[this.element]; 
+
+        this.mesh.material = towerMaterial;
+
+        this.mesh.setParent(this._node);
+
+        // this.mesh.position = this._node.position;
     }
 
     attackTarget(): void { 
         this._timerId = setInterval(() => {
-            let rockContainerNode = new UpdateableNode("enemy", this._node.getScene());
+            let rockContainerNode = new UpdateableNode("rock", this._node.getScene());
             const targetPosition = this.target.position;
             const direction = this._node.position.subtract(targetPosition).normalize();
 
@@ -33,7 +42,7 @@ export default class TowerBehavior extends UpdateableBehavior {
             rockContainerNode.addBehavior(tagBehavior);
 
             const rockMaterial = new StandardMaterial("rockMaterial", this._node.getScene());
-            rockMaterial.diffuseColor = new Color3(1, 0, 1); 
+            rockMaterial.diffuseColor = ElementColor[this.element]; 
             
             const rockMesh = MeshBuilder.CreateBox("rock", {
                 width: 0.1,

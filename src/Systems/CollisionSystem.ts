@@ -52,8 +52,8 @@ export default class CollisionSystem {
 function projectileEnemyCollision(projectile: UpdateableNode, enemy: UpdateableNode) {
     // const towerBehavior = projectile.parent.getBehaviorByName(BehaviorName.Tower) as TowerBehavior;
     // towerBehavior.target = null;
-    projectile.dispose();
     const enemyBehavior = enemy.getBehaviorByName(BehaviorName.Enemy) as EnemyBehavior;
     const projectileBehavior = projectile.getBehaviorByName(BehaviorName.Projectile) as ProjectileBehavior;
     enemyBehavior.reduceHealth(ElementalSystem.calculateDamage(1, projectileBehavior.element, enemyBehavior.element));
+    projectile.dispose();
 }

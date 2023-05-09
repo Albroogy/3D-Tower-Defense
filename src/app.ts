@@ -33,50 +33,54 @@ class App {
 
         const ground = MeshBuilder.CreateGround("ground", {width:100, height:100}, scene);
 
-        const enemyMaterial = new StandardMaterial("enemyMaterial", scene);
-        enemyMaterial.diffuseColor = new Color3(0, 1, 1);
+
 
         //const spawner = new Spawner("sphere", { diameter: 1 }, { x: 20, y: 10, z: 0 }, 1, scene, enemyMaterial); // spawn an enemy every second
         //spawner.start(); // start spawning enemies
 
-        const sphereEnemy = {parameters: { diameter: 1 }, material: enemyMaterial, type: EnemyType.SphereEnemy, health: 2, element: ElementType.Air};
-        const cubeEnemy = {parameters: {width: 0.5, depth: 0.5, height: 2.5}, material: enemyMaterial, type: EnemyType.CubeEnemy, health: 3, element: ElementType.Air};
+        const sphereEnemy = {parameters: { diameter: 1 }, type: EnemyType.SphereEnemy, health: 2, element: ElementType.Metal};
+        const sphereEnemy2 = {parameters: { diameter: 1 }, type: EnemyType.SphereEnemy, health: 2, element: ElementType.Air};
+        const cubeEnemy = {parameters: {width: 0.5, depth: 0.5, height: 2.5}, type: EnemyType.CubeEnemy, health: 3, element: ElementType.Water};
+        const cubeEnemy2 = {parameters: {width: 0.5, depth: 0.5, height: 2.5},  type: EnemyType.CubeEnemy, health: 3, element: ElementType.Fire};
 
         const waves = [
-            [sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy],
+            [sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy2, sphereEnemy2],
             [cubeEnemy, cubeEnemy, cubeEnemy],
             [sphereEnemy, sphereEnemy, sphereEnemy, cubeEnemy, cubeEnemy, cubeEnemy],
-            [cubeEnemy, cubeEnemy, cubeEnemy, cubeEnemy, cubeEnemy],
+            [cubeEnemy2, cubeEnemy2, cubeEnemy2, cubeEnemy, cubeEnemy],
             [sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy],
         ]
 
-        const spawner2 = new TransformNode("waveSpawner", scene);
+        const spawner2 = new UpdateableNode("waveSpawner", scene);
         spawner2.position.x = -20;
         const spawnerBehavior = new WaveSpawnerBehavior();
         spawnerBehavior.waveInfo = waves;
         spawner2.addBehavior(spawnerBehavior);
 
-        const tower = new TransformNode("tower", scene);
-        tower.position.y = 1.25;
-        const towerBehavior = new TowerBehavior(5, 10, ElementType.Fire);
-        const tagBehavior = new TagBehavior([Tag.Tower]);
-        tower.addBehavior(towerBehavior);
-        tower.addBehavior(tagBehavior);
-
-        const towerMaterial = new StandardMaterial("towerMaterial", scene);
-        towerMaterial.diffuseColor = new Color3(1, 0, 0); 
-        
         const towerMesh = MeshBuilder.CreateBox("towerMesh1", {
             width: 0.5,
             depth: 0.5,
             height: 2.5
         }, scene);
-        towerMesh.position.y = 1.25;
-        towerMesh.material = towerMaterial;
 
-        towerMesh.setParent(tower);
+        const tower = new UpdateableNode("tower1", scene);
+        tower.position.y = 1.25;
+        const towerBehavior = new TowerBehavior(5, 10, ElementType.Fire, towerMesh);
+        const tagBehavior = new TagBehavior([Tag.Tower]);
+        tower.addBehavior(towerBehavior);
+        tower.addBehavior(tagBehavior);
 
         objects.push(tower);
+
+        const tower2 = new UpdateableNode("tower2", scene);
+        tower2.position.y = 1.25;
+        tower2.position.z = 5;
+        const towerBehavior2 = new TowerBehavior(5, 10, ElementType.Water, towerMesh);
+        const tagBehavior2 = new TagBehavior([Tag.Tower]);
+        tower2.addBehavior(towerBehavior2);
+        tower2.addBehavior(tagBehavior2);
+
+        objects.push(tower2);
 
         // hide/show the Inspector
         window.addEventListener("keydown", (ev) => {
@@ -119,7 +123,7 @@ class App {
                                 if (object2.getBehaviorByName(BehaviorName.Tag).tags.includes(Tag.Enemy)) {
                                     const enemy = object2 as UpdateableNode;
                                     CollisionSystem.checkObjectsColliding(tower, enemy);
-                                    }
+                                }
                             }
                         }
                     }
@@ -132,7 +136,25 @@ class App {
 }
 new App();
 
-// // create the text block and add it to the GUI
+export type Enemy = {
+    parameters: Record<string, any>,
+    material: StandardMaterial | null,
+    type: EnemyType,
+    health: number,
+}
+
+// function createEnemy(enemy: Enemy, element: ElementType) {
+//     const enemy = {
+//       parameters: parameters,
+//       material: material,
+//       type: type,
+//       health: health,
+//       element: element
+//     };
+//     return enemy;
+//   }
+
+// create the text block and add it to the GUI
 // const gui = AdvancedDynamicTexture.CreateFullscreenUI("UI");
 // const enemyCountText = new TextBlock("enemyCountText", "Enemies: 0");
 // enemyCountText.color = "white";

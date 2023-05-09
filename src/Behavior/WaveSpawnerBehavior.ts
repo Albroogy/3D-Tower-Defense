@@ -1,6 +1,6 @@
 import { Mesh, MeshBuilder, StandardMaterial, TransformNode, Vector3 } from "@babylonjs/core";
 import EnemyBehavior from "./EnemyBehavior";
-import { BehaviorName, ElementType, objects, Tag } from "../Gobal";
+import { BehaviorName, ElementColor, ElementType, objects, OFFSET, Tag } from "../Gobal";
 import { TagBehavior } from "./TagBehavior";
 import UpdateableBehavior from "../UpdateableBehavior";
 import UpdateableNode from "../UpdateableNode";
@@ -12,7 +12,6 @@ export enum EnemyType {
 
 export type SpawnInfo = {
     parameters: Record<string, any>,
-    material: StandardMaterial | null,
     type: EnemyType,
     health: number,
     element: ElementType
@@ -48,9 +47,11 @@ export default class WaveSpawner extends UpdateableBehavior {
                 else if (enemyInfo.type == EnemyType.CubeEnemy) {
                     mesh = MeshBuilder.CreateBox("square", enemyInfo.parameters, spawner.getScene());
                 }
-                if (enemyInfo.material) {
-                    mesh.material = enemyInfo.material;
-                }
+                const enemyMaterial = new StandardMaterial("enemyMaterial", spawner.getScene());
+                enemyMaterial.diffuseColor = ElementColor[enemyInfo.element];
+
+                mesh.material = enemyMaterial;
+
                 mesh.setParent(enemyContainerNode);
                 enemyContainerNode.setParent(spawner);
                 // Setting the parent resets the position of the child to the transwformed position
@@ -64,10 +65,11 @@ export default class WaveSpawner extends UpdateableBehavior {
             } else {
                 clearInterval(this._timerId);
                 this.currentWave++;
-                this.spawnWave(spawner);
+                if (this.currentWave < this.waveInfo.length - OFFSET) {
+                    this.spawnWave(spawner);
+                }
                 // const curriedSpawnWave = this.spawnWave.bind(spawner);
                 // setTimeout(curriedSpawnWave, 3000);
-
             }
         }, this.interval * 1000);
     }
