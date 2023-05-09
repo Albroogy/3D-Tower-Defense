@@ -1,4 +1,5 @@
 import { Color3 } from "@babylonjs/core";
+import UpdateableNode from "./UpdateableNode";
 
 export enum BehaviorName {
     Enemy = "Enemy",
@@ -33,6 +34,6 @@ export const ElementColor = {
     [ElementType.Metal]: new Color3(0.8, 0.8, 0.8) // Metal element is gray
   };
 
-export const objects = [];
+export const objects: Array<UpdateableNode> = [];
 
 export const OFFSET = 1;

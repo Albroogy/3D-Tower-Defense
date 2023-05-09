@@ -9,32 +9,40 @@ export default class TowerBehavior extends UpdateableBehavior {
     public name = BehaviorName.Tower;
 
     private _node: TransformNode | null = null;
+    private _mesh: Mesh | null = null;
 
     private _timerId: any;
 
     public target: null | TransformNode = null;
-    constructor(private _attackSpeed: number, private _towerAttackRadius: number, public element: ElementType, public mesh: Mesh) {
+    constructor(private _attackSpeed: number, private _towerAttackRadius: number, public element: ElementType) {
         super();
     }
 
     public attach(target: TransformNode): void {
         this._node = target;
+        
+        this._mesh = MeshBuilder.CreateBox("towerMesh1", {
+            width: 0.5,
+            depth: 0.5,
+            height: 2.5
+        }, this._node.getScene());
 
         const towerMaterial = new StandardMaterial("towerMaterial", this._node.getScene());
         towerMaterial.diffuseColor = ElementColor[this.element]; 
 
-        this.mesh.material = towerMaterial;
+        this._mesh.material = towerMaterial;
 
-        this.mesh.setParent(this._node);
-
-        // this.mesh.position = this._node.position;
+        this._mesh.setParent(this._node);
+        this._mesh.setPositionWithLocalVector(Vector3.ZeroReadOnly);
     }
 
-    attackTarget(): void { 
-        this._timerId = setInterval(() => {
+    attackTarget(): void {
+        const shoot = () => {
             let rockContainerNode = new UpdateableNode("rock", this._node.getScene());
-            const targetPosition = this.target.position;
-            const direction = this._node.position.subtract(targetPosition).normalize();
+            const targetPosition = this.target.getAbsolutePosition();
+            const towerGroudPosition = this._node.position.clone();
+            towerGroudPosition.y = 0;
+            const direction = targetPosition.subtract(towerGroudPosition).normalize();
 
             const projectileBehavior = new ProjectileBehavior(2, 10, direction, this.element);
             const tagBehavior = new TagBehavior([Tag.Projectile]);
@@ -52,11 +60,12 @@ export default class TowerBehavior extends UpdateableBehavior {
             rockMesh.material = rockMaterial;
 
             rockMesh.setParent(rockContainerNode);
+            rockMesh.setPositionWithLocalVector(Vector3.ZeroReadOnly);
             rockContainerNode.setParent(this._node);
-
+            rockContainerNode.setPositionWithLocalVector(new Vector3(0, -this._node.position.y/2, 0));
             objects.push(rockContainerNode);
-            
-            }, 1000 - this._attackSpeed * 100);
+        };
+        this._timerId = setInterval(shoot, 1000/this._attackSpeed);
     }
 
     changeTarget(target: TransformNode) {
@@ -67,5 +76,9 @@ export default class TowerBehavior extends UpdateableBehavior {
 
     get towerAttackRadius(){
         return this._towerAttackRadius;
+    }
+    
+    get towerAttackRadiusSquared(){
+        return this._towerAttackRadius * this._towerAttackRadius;
     }
 }

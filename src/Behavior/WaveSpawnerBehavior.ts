@@ -53,6 +53,7 @@ export default class WaveSpawner extends UpdateableBehavior {
                 mesh.material = enemyMaterial;
 
                 mesh.setParent(enemyContainerNode);
+                mesh.setPositionWithLocalVector(Vector3.Zero());
                 enemyContainerNode.setParent(spawner);
                 // Setting the parent resets the position of the child to the transwformed position
                 enemyContainerNode.setPositionWithLocalVector(Vector3.Zero());

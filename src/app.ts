@@ -57,30 +57,44 @@ class App {
         spawnerBehavior.waveInfo = waves;
         spawner2.addBehavior(spawnerBehavior);
 
-        const towerMesh = MeshBuilder.CreateBox("towerMesh1", {
-            width: 0.5,
-            depth: 0.5,
-            height: 2.5
-        }, scene);
-
         const tower = new UpdateableNode("tower1", scene);
         tower.position.y = 1.25;
-        const towerBehavior = new TowerBehavior(5, 10, ElementType.Fire, towerMesh);
+        tower.position.x = -10;
+        tower.position.z = 10;
+        const towerBehavior = new TowerBehavior(2.5, 10, ElementType.Fire);
         const tagBehavior = new TagBehavior([Tag.Tower]);
         tower.addBehavior(towerBehavior);
         tower.addBehavior(tagBehavior);
 
-        objects.push(tower);
 
         const tower2 = new UpdateableNode("tower2", scene);
         tower2.position.y = 1.25;
-        tower2.position.z = 5;
-        const towerBehavior2 = new TowerBehavior(5, 10, ElementType.Water, towerMesh);
+        tower2.position.x = 10;
+        tower2.position.z = 10;
+        const towerBehavior2 = new TowerBehavior(2.5, 10, ElementType.Water);
         const tagBehavior2 = new TagBehavior([Tag.Tower]);
         tower2.addBehavior(towerBehavior2);
         tower2.addBehavior(tagBehavior2);
 
+        
+        const tower3 = new UpdateableNode("tower3", scene);
+        tower3.position.y = 1.25;
+        tower3.position.x = 10;
+        tower3.position.z = -10;
+        tower3.addBehavior(new TowerBehavior(2.5, 10, ElementType.Air));
+        tower3.addBehavior(new TagBehavior([Tag.Tower]));
+        
+        const tower4 = new UpdateableNode("tower4", scene);
+        tower4.position.y = 1.25;
+        tower4.position.x = -10;
+        tower4.position.z = -10;
+        tower4.addBehavior(new TowerBehavior(2.5, 10, ElementType.Earth));
+        tower4.addBehavior(new TagBehavior([Tag.Tower]));
+
+        objects.push(tower);
         objects.push(tower2);
+        objects.push(tower3);
+        objects.push(tower4);
 
         // hide/show the Inspector
         window.addEventListener("keydown", (ev) => {
@@ -94,36 +108,65 @@ class App {
             }
         });
 
+        // HOMEWORK: Decide which one to use
+        //const findClosestByTag = (objects: Array<UpdateableNode>, tag: Tag): UpdateableNode | null => {
+        //    for (const obj of objects) {
+        //        const tagBehavior = obj.getBehaviorByName(BehaviorName.Tag) as TagBehavior;
+        //        if (!tagBehavior) {
+        //            continue;
+        //        }
+        //        if (tagBehavior.tags.includes(Tag.Enemy)) {
+        //            if (tower.position.subtract(obj.position).lengthSquared() <= towerBehavior.towerAttackRadiusSquared) {
+        //                return obj;
+        //            }
+        //        }
+        //    }
+        //    return null;
+        //};
+        //
+        //const findClosestByTag = (objects: Array<UpdateableNode>, tag: Tag): UpdateableNode | null => {
+        //    const isObjectAnEnemy = (o: UpdateableNode) => (o.getBehaviorByName(BehaviorName.Tag) as TagBehavior)?.tags.includes(Tag.Enemy);
+        //    const isEnemyInRadius = (e: UpdateableNode) => tower.position.subtract(e.position).lengthSquared() <= towerBehavior.towerAttackRadiusSquared;
+//
+        //    const allPotentialEnemies = 
+        //        objects.filter(isObjectAnEnemy).filter(isEnemyInRadius);
+        //    return allPotentialEnemies[0];
+        //};
+
         // run the main render loop
         engine.runRenderLoop(() => {
             const dt = engine.getDeltaTime() / 1000;
             UpdateableNodeManager.instance.update(dt);
             for (const object1 of objects) {
-                if (object1.getBehaviorByName(BehaviorName.Tag) != null) {
-                    if (object1.getBehaviorByName(BehaviorName.Tag).tags.includes(Tag.Tower)) {
-                        const tower = object1 as UpdateableNode;
-                        const towerBehavior = object1.getBehaviorByName(BehaviorName.Tower) as TowerBehavior;
-                        if (!towerBehavior.target) {
-                            for (const object2 of objects) {
-                                if (object2.getBehaviorByName(BehaviorName.Tag) != null) {
-                                    if (object2.getBehaviorByName(BehaviorName.Tag).tags.includes(Tag.Enemy)) {
-                                        const enemy = object2 as UpdateableNode;
-                                        if (Math.abs(tower.position.x - enemy.position.x) <= towerBehavior.towerAttackRadius && Math.abs(tower.position.y - enemy.position.y) <= towerBehavior.towerAttackRadius) {
-                                            towerBehavior.changeTarget(enemy);
-                                        }
-                                     }
-                                }
+                const tag1 = object1.getBehaviorByName(BehaviorName.Tag) as TagBehavior;
+                if (!tag1) {
+                    continue;
+                }
+                if (tag1.tags.includes(Tag.Tower)) {
+                    const tower = object1 as UpdateableNode;
+                    const towerBehavior = object1.getBehaviorByName(BehaviorName.Tower) as TowerBehavior;
+                    if (!towerBehavior.target) {
+                        for (const object2 of objects) {
+                            const tag2 = object2.getBehaviorByName(BehaviorName.Tag) as TagBehavior;
+                            if (tag2 != null) {
+                                if (tag2.tags.includes(Tag.Enemy)) {
+                                    const enemy = object2 as UpdateableNode;
+                                    if (Math.abs(tower.position.x - enemy.position.x) <= towerBehavior.towerAttackRadius && Math.abs(tower.position.y - enemy.position.y) <= towerBehavior.towerAttackRadius) {
+                                        towerBehavior.changeTarget(enemy);
+                                    }
+                                    }
                             }
                         }
                     }
-                    if (object1.getBehaviorByName(BehaviorName.Tag).tags.includes(Tag.Projectile)) {
-                        const tower = object1 as UpdateableNode;
-                        for (const object2 of objects) {
-                            if (object2.getBehaviorByName(BehaviorName.Tag) != null) {
-                                if (object2.getBehaviorByName(BehaviorName.Tag).tags.includes(Tag.Enemy)) {
-                                    const enemy = object2 as UpdateableNode;
-                                    CollisionSystem.checkObjectsColliding(tower, enemy);
-                                }
+                }
+                if (tag1.tags.includes(Tag.Projectile)) {
+                    const tower = object1 as UpdateableNode;
+                    for (const object2 of objects) {
+                        const tag2 = object2.getBehaviorByName(BehaviorName.Tag) as TagBehavior;
+                        if (tag2 != null) {
+                            if (tag2.tags.includes(Tag.Enemy)) {
+                                const enemy = object2 as UpdateableNode;
+                                CollisionSystem.checkObjectsColliding(tower, enemy);
                             }
                         }
                     }
