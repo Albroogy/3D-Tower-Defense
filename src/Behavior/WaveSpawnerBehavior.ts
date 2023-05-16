@@ -1,6 +1,6 @@
 import { Mesh, MeshBuilder, Scene, StandardMaterial, TransformNode, Vector3 } from "@babylonjs/core";
 import EnemyBehavior from "./EnemyBehavior";
-import { BehaviorName, ElementColor, ElementType, objects, OFFSET, Tag } from "../Gobal";
+import { BehaviorName, ElementColor, ElementMaterial as ElementMaterial, ElementType, objects, OFFSET, Tag } from "../Gobal";
 import { TagBehavior } from "./TagBehavior";
 import UpdateableBehavior from "../UpdateableBehavior";
 import UpdateableNode from "../UpdateableNode";
@@ -66,10 +66,8 @@ export default class WaveSpawner extends UpdateableBehavior {
                 else {
                     mesh = createEnemyMesh[EnemyType.Cube]("enemyMesh", enemyInfo.parameters, spawner.getScene());
                 }
-                const enemyMaterial = new StandardMaterial("enemyMaterial", spawner.getScene());
-                enemyMaterial.diffuseColor = ElementColor[enemyInfo.element];
 
-                mesh.material = enemyMaterial;
+                mesh.material = ElementMaterial[enemyInfo.element];
 
                 mesh.setParent(enemyContainerNode);
                 mesh.setPositionWithLocalVector(Vector3.Zero());

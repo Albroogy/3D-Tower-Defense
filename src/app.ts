@@ -1,13 +1,13 @@
 import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
 import "@babylonjs/loaders/glTF";
-import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, MeshBuilder} from "@babylonjs/core";
+import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, MeshBuilder, StandardMaterial} from "@babylonjs/core";
 import WaveSpawnerBehavior, { EnemyType, SpawnInfo } from "./Behavior/WaveSpawnerBehavior";
 import UpdateableNodeManager from "./UpdateableNodeManager";
 import { TagBehavior } from "./Behavior/TagBehavior";
 import UpdateableNode from "./UpdateableNode";
 import TowerBehavior from "./Behavior/TowerBehaviour";
-import { BehaviorName, objects, Tag, ElementType, getRandomEnumValue } from "./Gobal";
+import { BehaviorName, objects, Tag, ElementType, getRandomEnumValue, ElementMaterial, ElementColor } from "./Gobal";
 import CollisionSystem from "./Systems/CollisionSystem";
 
 const enemyParameterMap = {
@@ -94,6 +94,14 @@ class App {
         var engine = new Engine(canvas, true);
         var scene = new Scene(engine);
 
+        for (const element of Object.keys(ElementType)) {
+            if (!isNaN(element as any as number)) {
+                continue;
+            }
+            ElementMaterial[ElementType[element]] = new StandardMaterial(`${element}-material`, scene);
+            ElementMaterial[ElementType[element]].diffuseColor = ElementColor[ElementType[element]];
+        }
+
         var camera: ArcRotateCamera = new ArcRotateCamera("Camera", Math.PI / 2, Math.PI / 4, 10, Vector3.Zero(), scene);
         camera.attachControl(canvas, true);
         camera.position.y += 500;
@@ -179,26 +187,6 @@ class App {
             }
         });
 
-        const findClosestByTag = (objects: Array<UpdateableNode>, tower: UpdateableNode): UpdateableNode | null => {
-            // const isObjectDisposedOf = (o: UpdateableNode) => !o.isDisposed();
-            const isObjectAnEnemy = (o: UpdateableNode) => (o.getBehaviorByName(BehaviorName.Tag) as TagBehavior)?.tags.includes(Tag.Enemy);
-            const isEnemyInRadius = (e: UpdateableNode) => tower.position.subtract(e.position).lengthSquared() <= (tower.getBehaviorByName(BehaviorName.Tower) as TowerBehavior).towerAttackRadiusSquared;
-          
-            const allPotentialEnemies = objects.filter(isObjectAnEnemy).filter(isEnemyInRadius);
-          
-            if (allPotentialEnemies.length === 0) {
-              return null;
-            }
-          
-            const closestEnemy = allPotentialEnemies.reduce((closest, current) => {
-              const distanceToClosest = tower.position.subtract(closest.position).lengthSquared();
-              const distanceToCurrent = tower.position.subtract(current.position).lengthSquared();
-              return distanceToCurrent < distanceToClosest ? current : closest;
-            }, allPotentialEnemies[0]);
-          
-            return closestEnemy;
-        };
-
         // run the main render loop
         engine.runRenderLoop(() => {
             const dt = engine.getDeltaTime() / 1000;
@@ -207,16 +195,6 @@ class App {
                 const tag1 = object1.getBehaviorByName(BehaviorName.Tag) as TagBehavior;
                 if (!tag1) {
                     continue;
-                }
-                if (tag1.tags.includes(Tag.Tower)) {
-                    const tower = object1 as UpdateableNode;
-                    if (!towerBehavior.target) {
-                        const enemy = findClosestByTag(objects, tower);
-                        if (enemy) {
-                            towerBehavior.chooseTarget(enemy);
-                            console.log("targetChosen")
-                        }
-                    }
                 }
                 if (tag1.tags.includes(Tag.Projectile)) {
                     const tower = object1 as UpdateableNode;

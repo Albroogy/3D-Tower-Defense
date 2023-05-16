@@ -23,16 +23,14 @@ export class HealthBar {
         this._height = height;
 
         this._healthBarBackground = new Rectangle("healthBarBackground");
-        this._healthBarBackground.width = this._width;
-        this._healthBarBackground.height = this._height;
+        this._healthBarBackground.width = this._width + "px";
+        this._healthBarBackground.height = this._height + "px";
         this._healthBarBackground.color = "gray";
         this._healthBarBackground.thickness = 0;
-        this._healthBarBackground.background = "white";
+        this._healthBarBackground.background = "red";
         this._guiTexture.addControl(this._healthBarBackground);
 
         this._healthBar = new Rectangle("healthBar");
-        this._healthBar.width = "100%";
-        this._healthBar.height = "100%";
         this._healthBar.color = this._color;
         this._healthBar.thickness = 0;
         this._healthBarBackground.addControl(this._healthBar);
