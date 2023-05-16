@@ -1,17 +1,85 @@
 import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
 import "@babylonjs/loaders/glTF";
-import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, Mesh, MeshBuilder, StandardMaterial, Color3, TransformNode } from "@babylonjs/core";
-import { AdvancedDynamicTexture, Button, TextBlock, Rectangle } from "@babylonjs/gui";
-import { Control } from "@babylonjs/gui/2D/controls/control";
-import WaveSpawnerBehavior, { EnemyType } from "./Behavior/WaveSpawnerBehavior";
+import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, MeshBuilder} from "@babylonjs/core";
+import WaveSpawnerBehavior, { EnemyType, SpawnInfo } from "./Behavior/WaveSpawnerBehavior";
 import UpdateableNodeManager from "./UpdateableNodeManager";
-import EnemyBehavior from "./Behavior/EnemyBehavior";
 import { TagBehavior } from "./Behavior/TagBehavior";
 import UpdateableNode from "./UpdateableNode";
 import TowerBehavior from "./Behavior/TowerBehaviour";
-import { BehaviorName, objects, Tag, ElementType } from "./Gobal";
+import { BehaviorName, objects, Tag, ElementType, getRandomEnumValue } from "./Gobal";
 import CollisionSystem from "./Systems/CollisionSystem";
+
+const enemyParameterMap = {
+    [EnemyType.Sphere]: { diameter: 2 },
+    [EnemyType.Cube]: { width: 2, height: 2, depth: 2 },
+    [EnemyType.Cylinder]: { height: 2, diameterTop: 1, diameterBottom: 1 },
+    [EnemyType.Torus]: { diameter: 3, thickness: 0.5 },
+    [EnemyType.TorusKnot]: { radius: 2, tube: 0.5, radialSegments: 16, tubularSegments: 100 },
+    [EnemyType.Disc]: { radius: 2, tessellation: 20 },
+};
+
+// const enemyParameterMap = {
+//     [EnemyType.Sphere]: {},
+//     [EnemyType.Cube]: {},
+//     [EnemyType.Cylinder]: {},
+//     [EnemyType.Torus]: {},
+//     [EnemyType.TorusKnot]: {},
+//     [EnemyType.Disc]: {},
+//   };
+
+function generateRandomWave(waveLength: number): Array<SpawnInfo> {
+    const wave: Array<SpawnInfo> = [];
+  
+    for (let i = 0; i < waveLength; i++) {
+        const enemyType = getRandomEnumValue(EnemyType);
+
+        let health: number;
+        let element: ElementType;
+
+        switch (enemyType) {
+            case EnemyType.Sphere:
+                health = 2;
+                element = ElementType.Fire;
+                break;
+            case EnemyType.Cube:
+                health = 1;
+                element = ElementType.Earth;
+                break;
+            case EnemyType.Cylinder:
+                health = 3;
+                element = ElementType.Water;
+                break;
+            case EnemyType.Torus:
+                health = 5;
+                element = ElementType.Air;
+                break;
+            case EnemyType.TorusKnot:
+                health = 15;
+                element = ElementType.Water;
+                break;
+            case EnemyType.Disc:
+                health = 10;
+                element = ElementType.Fire;
+                break;
+            default:
+                health = 2;
+                element = ElementType.Water;
+                console.log("DEFAULT")
+        }
+
+        const spawnInfo: SpawnInfo = {
+            parameters: enemyParameterMap[enemyType],
+            type: enemyType,
+            health: health,
+            element: element
+        };
+    
+        wave.push(spawnInfo);
+    }
+  
+    return wave;
+}
 
 class App {
     constructor() {
@@ -38,18 +106,21 @@ class App {
         //const spawner = new Spawner("sphere", { diameter: 1 }, { x: 20, y: 10, z: 0 }, 1, scene, enemyMaterial); // spawn an enemy every second
         //spawner.start(); // start spawning enemies
 
-        const sphereEnemy = {parameters: { diameter: 1 }, type: EnemyType.SphereEnemy, health: 2, element: ElementType.Metal};
-        const sphereEnemy2 = {parameters: { diameter: 1 }, type: EnemyType.SphereEnemy, health: 2, element: ElementType.Air};
-        const cubeEnemy = {parameters: {width: 0.5, depth: 0.5, height: 2.5}, type: EnemyType.CubeEnemy, health: 3, element: ElementType.Water};
-        const cubeEnemy2 = {parameters: {width: 0.5, depth: 0.5, height: 2.5},  type: EnemyType.CubeEnemy, health: 3, element: ElementType.Fire};
+        const sphereEnemy: SpawnInfo = {parameters: { diameter: 1 }, type: EnemyType.Sphere, health: 2, element: ElementType.Metal};
+        const sphereEnemy2: SpawnInfo = {parameters: { diameter: 1 }, type: EnemyType.Sphere, health: 2, element: ElementType.Air};
+        const cubeEnemy: SpawnInfo = {parameters: {size: 0.5}, type: EnemyType.Cube, health: 3, element: ElementType.Water};
+        const cubeEnemy2: SpawnInfo = {parameters: {width: 0.5, depth: 0.5, height: 2.5},  type: EnemyType.Cube, health: 3, element: ElementType.Fire};
 
-        const waves = [
-            [sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy2, sphereEnemy2],
-            [cubeEnemy, cubeEnemy, cubeEnemy],
-            [sphereEnemy, sphereEnemy, sphereEnemy, cubeEnemy, cubeEnemy, cubeEnemy],
+        const waves: Array<Array<SpawnInfo>> = [
+            generateRandomWave(3),
+            generateRandomWave(5),
+            generateRandomWave(8),
+            generateRandomWave(10),
             [cubeEnemy2, cubeEnemy2, cubeEnemy2, cubeEnemy, cubeEnemy],
             [sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy],
         ]
+
+        console.log(waves)
 
         const spawner2 = new UpdateableNode("waveSpawner", scene);
         spawner2.position.x = -20;
@@ -61,7 +132,7 @@ class App {
         tower.position.y = 1.25;
         tower.position.x = -10;
         tower.position.z = 10;
-        const towerBehavior = new TowerBehavior(2.5, 10, ElementType.Fire);
+        const towerBehavior = new TowerBehavior(2.5, 100, ElementType.Fire);
         const tagBehavior = new TagBehavior([Tag.Tower]);
         tower.addBehavior(towerBehavior);
         tower.addBehavior(tagBehavior);
@@ -71,7 +142,7 @@ class App {
         tower2.position.y = 1.25;
         tower2.position.x = 10;
         tower2.position.z = 10;
-        const towerBehavior2 = new TowerBehavior(2.5, 10, ElementType.Water);
+        const towerBehavior2 = new TowerBehavior(2.5, 100, ElementType.Water);
         const tagBehavior2 = new TagBehavior([Tag.Tower]);
         tower2.addBehavior(towerBehavior2);
         tower2.addBehavior(tagBehavior2);
@@ -81,14 +152,14 @@ class App {
         tower3.position.y = 1.25;
         tower3.position.x = 10;
         tower3.position.z = -10;
-        tower3.addBehavior(new TowerBehavior(2.5, 10, ElementType.Air));
+        tower3.addBehavior(new TowerBehavior(2.5, 100, ElementType.Air));
         tower3.addBehavior(new TagBehavior([Tag.Tower]));
         
         const tower4 = new UpdateableNode("tower4", scene);
         tower4.position.y = 1.25;
         tower4.position.x = -10;
         tower4.position.z = -10;
-        tower4.addBehavior(new TowerBehavior(2.5, 10, ElementType.Earth));
+        tower4.addBehavior(new TowerBehavior(2.5, 100, ElementType.Earth));
         tower4.addBehavior(new TagBehavior([Tag.Tower]));
 
         objects.push(tower);
@@ -108,30 +179,25 @@ class App {
             }
         });
 
-        // HOMEWORK: Decide which one to use
-        //const findClosestByTag = (objects: Array<UpdateableNode>, tag: Tag): UpdateableNode | null => {
-        //    for (const obj of objects) {
-        //        const tagBehavior = obj.getBehaviorByName(BehaviorName.Tag) as TagBehavior;
-        //        if (!tagBehavior) {
-        //            continue;
-        //        }
-        //        if (tagBehavior.tags.includes(Tag.Enemy)) {
-        //            if (tower.position.subtract(obj.position).lengthSquared() <= towerBehavior.towerAttackRadiusSquared) {
-        //                return obj;
-        //            }
-        //        }
-        //    }
-        //    return null;
-        //};
-        //
-        //const findClosestByTag = (objects: Array<UpdateableNode>, tag: Tag): UpdateableNode | null => {
-        //    const isObjectAnEnemy = (o: UpdateableNode) => (o.getBehaviorByName(BehaviorName.Tag) as TagBehavior)?.tags.includes(Tag.Enemy);
-        //    const isEnemyInRadius = (e: UpdateableNode) => tower.position.subtract(e.position).lengthSquared() <= towerBehavior.towerAttackRadiusSquared;
-//
-        //    const allPotentialEnemies = 
-        //        objects.filter(isObjectAnEnemy).filter(isEnemyInRadius);
-        //    return allPotentialEnemies[0];
-        //};
+        const findClosestByTag = (objects: Array<UpdateableNode>, tower: UpdateableNode): UpdateableNode | null => {
+            // const isObjectDisposedOf = (o: UpdateableNode) => !o.isDisposed();
+            const isObjectAnEnemy = (o: UpdateableNode) => (o.getBehaviorByName(BehaviorName.Tag) as TagBehavior)?.tags.includes(Tag.Enemy);
+            const isEnemyInRadius = (e: UpdateableNode) => tower.position.subtract(e.position).lengthSquared() <= (tower.getBehaviorByName(BehaviorName.Tower) as TowerBehavior).towerAttackRadiusSquared;
+          
+            const allPotentialEnemies = objects.filter(isObjectAnEnemy).filter(isEnemyInRadius);
+          
+            if (allPotentialEnemies.length === 0) {
+              return null;
+            }
+          
+            const closestEnemy = allPotentialEnemies.reduce((closest, current) => {
+              const distanceToClosest = tower.position.subtract(closest.position).lengthSquared();
+              const distanceToCurrent = tower.position.subtract(current.position).lengthSquared();
+              return distanceToCurrent < distanceToClosest ? current : closest;
+            }, allPotentialEnemies[0]);
+          
+            return closestEnemy;
+        };
 
         // run the main render loop
         engine.runRenderLoop(() => {
@@ -144,18 +210,11 @@ class App {
                 }
                 if (tag1.tags.includes(Tag.Tower)) {
                     const tower = object1 as UpdateableNode;
-                    const towerBehavior = object1.getBehaviorByName(BehaviorName.Tower) as TowerBehavior;
                     if (!towerBehavior.target) {
-                        for (const object2 of objects) {
-                            const tag2 = object2.getBehaviorByName(BehaviorName.Tag) as TagBehavior;
-                            if (tag2 != null) {
-                                if (tag2.tags.includes(Tag.Enemy)) {
-                                    const enemy = object2 as UpdateableNode;
-                                    if (Math.abs(tower.position.x - enemy.position.x) <= towerBehavior.towerAttackRadius && Math.abs(tower.position.y - enemy.position.y) <= towerBehavior.towerAttackRadius) {
-                                        towerBehavior.changeTarget(enemy);
-                                    }
-                                    }
-                            }
+                        const enemy = findClosestByTag(objects, tower);
+                        if (enemy) {
+                            towerBehavior.chooseTarget(enemy);
+                            console.log("targetChosen")
                         }
                     }
                 }
@@ -178,13 +237,8 @@ class App {
     }
 }
 new App();
+  
 
-export type Enemy = {
-    parameters: Record<string, any>,
-    material: StandardMaterial | null,
-    type: EnemyType,
-    health: number,
-}
 
 // function createEnemy(enemy: Enemy, element: ElementType) {
 //     const enemy = {

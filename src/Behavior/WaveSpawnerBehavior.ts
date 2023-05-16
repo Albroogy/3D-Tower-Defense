@@ -1,17 +1,35 @@
-import { Mesh, MeshBuilder, StandardMaterial, TransformNode, Vector3 } from "@babylonjs/core";
+import { Mesh, MeshBuilder, Scene, StandardMaterial, TransformNode, Vector3 } from "@babylonjs/core";
 import EnemyBehavior from "./EnemyBehavior";
 import { BehaviorName, ElementColor, ElementType, objects, OFFSET, Tag } from "../Gobal";
 import { TagBehavior } from "./TagBehavior";
 import UpdateableBehavior from "../UpdateableBehavior";
 import UpdateableNode from "../UpdateableNode";
+import HealthBarBehavior, { HealthBar } from "./HealthBarBehavior";
+
 
 export enum EnemyType {
-    SphereEnemy,
-    CubeEnemy,
-}
+    Sphere = "Sphere",
+    Cube = "Cube",
+    Cylinder = "Cylinder",
+    Torus = "Torus",
+    Plane = "Plane",
+    TorusKnot = "TorusKnot",
+    Disc = "Disc",
+  }
+
+type Parameters = Record<string, any>;
+
+const createEnemyMesh = {
+    [EnemyType.Sphere]: (name: string, parameters: Parameters, scene: Scene) => MeshBuilder.CreateSphere(name, parameters, scene),
+    [EnemyType.Cube]: (name: string, parameters: Parameters, scene: Scene) => MeshBuilder.CreateBox(name, parameters, scene),
+    [EnemyType.Cylinder]: (name: string, parameters: Parameters, scene: Scene) => MeshBuilder.CreateCylinder(name, parameters, scene),
+    [EnemyType.Torus]: (name: string, parameters: Parameters, scene: Scene) => MeshBuilder.CreateTorus(name, parameters, scene),
+    [EnemyType.TorusKnot]: (name: string, parameters: Parameters, scene: Scene) => MeshBuilder.CreateTorusKnot(name, parameters, scene),
+    [EnemyType.Disc]: (name: string, parameters: Parameters, scene: Scene) => MeshBuilder.CreateDisc(name, parameters, scene)
+};
 
 export type SpawnInfo = {
-    parameters: Record<string, any>,
+    parameters: Parameters,
     type: EnemyType,
     health: number,
     element: ElementType
@@ -41,11 +59,12 @@ export default class WaveSpawner extends UpdateableBehavior {
                 const enemyInfo = this.waveInfo[this.currentWave][enemyIndex];
                 let enemyContainerNode = new UpdateableNode("enemy", spawner.getScene());
                 let mesh: Mesh;
-                if (enemyInfo.type == EnemyType.SphereEnemy) {
-                    mesh = MeshBuilder.CreateSphere("sphere", enemyInfo.parameters, spawner.getScene());
+                if (typeof createEnemyMesh[enemyInfo.type] === 'function') {
+                    console.log(createEnemyMesh[enemyInfo.type])
+                    mesh = createEnemyMesh[enemyInfo.type]("enemyMesh", enemyInfo.parameters, spawner.getScene());
                 }
-                else if (enemyInfo.type == EnemyType.CubeEnemy) {
-                    mesh = MeshBuilder.CreateBox("square", enemyInfo.parameters, spawner.getScene());
+                else {
+                    mesh = createEnemyMesh[EnemyType.Cube]("enemyMesh", enemyInfo.parameters, spawner.getScene());
                 }
                 const enemyMaterial = new StandardMaterial("enemyMaterial", spawner.getScene());
                 enemyMaterial.diffuseColor = ElementColor[enemyInfo.element];
@@ -59,8 +78,12 @@ export default class WaveSpawner extends UpdateableBehavior {
                 enemyContainerNode.setPositionWithLocalVector(Vector3.Zero());
                 const enemyBehavior = new EnemyBehavior(3, enemyInfo.element, enemyInfo.health);
                 const tagBehavior = new TagBehavior([Tag.Enemy]);
+                
+                const healthBar = new HealthBar(enemyInfo.health, "red", 100, 10);
+                const healthBarBehavior = new HealthBarBehavior([healthBar]);
                 enemyContainerNode.addBehavior(enemyBehavior);
                 enemyContainerNode.addBehavior(tagBehavior);
+                enemyContainerNode.addBehavior(healthBarBehavior);
                 objects.push(enemyContainerNode);
                 enemyIndex++;
             } else {

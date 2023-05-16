@@ -36,7 +36,10 @@ export default class TowerBehavior extends UpdateableBehavior {
         this._mesh.setPositionWithLocalVector(Vector3.ZeroReadOnly);
     }
 
-    attackTarget(): void {
+    public attackTarget(): void {
+        if (!this.target) {
+            return;
+        }
         const shoot = () => {
             let rockContainerNode = new UpdateableNode("rock", this._node.getScene());
             const targetPosition = this.target.getAbsolutePosition();
@@ -44,7 +47,7 @@ export default class TowerBehavior extends UpdateableBehavior {
             towerGroudPosition.y = 0;
             const direction = targetPosition.subtract(towerGroudPosition).normalize();
 
-            const projectileBehavior = new ProjectileBehavior(2, 10, direction, this.element);
+            const projectileBehavior = new ProjectileBehavior(10, 10, direction, this.element);
             const tagBehavior = new TagBehavior([Tag.Projectile]);
             rockContainerNode.addBehavior(projectileBehavior);
             rockContainerNode.addBehavior(tagBehavior);
@@ -62,16 +65,29 @@ export default class TowerBehavior extends UpdateableBehavior {
             rockMesh.setParent(rockContainerNode);
             rockMesh.setPositionWithLocalVector(Vector3.ZeroReadOnly);
             rockContainerNode.setParent(this._node);
-            rockContainerNode.setPositionWithLocalVector(new Vector3(0, -this._node.position.y/2, 0));
+            rockContainerNode.setPositionWithLocalVector(new Vector3(0, -this._node.position.y, 0));
             objects.push(rockContainerNode);
         };
         this._timerId = setInterval(shoot, 1000/this._attackSpeed);
     }
 
-    changeTarget(target: TransformNode) {
-        clearInterval(this._timerId);
+    public chooseTarget(target: TransformNode) {
         this.target = target;
         this.attackTarget()
+    }
+
+    public clearTarget() {
+        clearInterval(this._timerId);
+        this.target = null;
+        console.log("clearTarget")
+    }
+
+    public update(dt: number): void {
+        if (this.target) {
+            if (this.target.isDisposed() || this._node.position.subtract(this.target.position).lengthSquared() > this.towerAttackRadiusSquared) {
+                this.clearTarget();
+            }
+        }
     }
 
     get towerAttackRadius(){

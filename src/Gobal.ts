@@ -32,8 +32,14 @@ export const ElementColor = {
     [ElementType.Water]: new Color3(0, 0, 1),     // Water element is blue
     [ElementType.Air]: new Color3(0.8, 0.8, 1),   // Air element is light blue
     [ElementType.Metal]: new Color3(0.8, 0.8, 0.8) // Metal element is gray
-  };
+};
 
 export const objects: Array<UpdateableNode> = [];
 
 export const OFFSET = 1;
+
+export function getRandomEnumValue<T>(anEnum: T): T[keyof T] {
+    const enumValues = Object.values(anEnum);
+    const randomIndex = Math.floor(Math.random() * enumValues.length);
+    return enumValues[randomIndex] as T[keyof T];
+}

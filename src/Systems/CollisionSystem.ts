@@ -1,5 +1,5 @@
 import EnemyBehavior from "../Behavior/EnemyBehavior";
-import { BehaviorName, Tag } from "../Gobal";
+import { BehaviorName, objects, Tag } from "../Gobal";
 import { TagBehavior } from "../Behavior/TagBehavior";
 import TowerBehavior from "../Behavior/TowerBehaviour";
 import UpdateableNode from "../UpdateableNode";
@@ -50,10 +50,9 @@ export default class CollisionSystem {
 }
 
 function projectileEnemyCollision(projectile: UpdateableNode, enemy: UpdateableNode) {
-    // const towerBehavior = projectile.parent.getBehaviorByName(BehaviorName.Tower) as TowerBehavior;
-    // towerBehavior.target = null;
     const enemyBehavior = enemy.getBehaviorByName(BehaviorName.Enemy) as EnemyBehavior;
     const projectileBehavior = projectile.getBehaviorByName(BehaviorName.Projectile) as ProjectileBehavior;
     enemyBehavior.reduceHealth(ElementalSystem.calculateDamage(1, projectileBehavior.element, enemyBehavior.element));
     projectile.dispose();
+    // objects.splice(objects.indexOf(enemy), 1);
 }
