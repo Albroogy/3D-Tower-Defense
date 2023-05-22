@@ -5,6 +5,7 @@ import TowerBehavior from "../Behavior/TowerBehaviour";
 import UpdateableNode from "../UpdateableNode";
 import ElementalSystem from "./ElementalSystem";
 import ProjectileBehavior from "../Behavior/ProjectileBehavior";
+import HealthBarBehavior from "../Behavior/HealthBarBehavior";
 
 type Func = (object1: UpdateableNode, object2: UpdateableNode) => void;
 type Registry = { [tag: string]: { [subtag: string]: Func } }; 
@@ -51,8 +52,9 @@ export default class CollisionSystem {
 
 function projectileEnemyCollision(projectile: UpdateableNode, enemy: UpdateableNode) {
     const enemyBehavior = enemy.getBehaviorByName(BehaviorName.Enemy) as EnemyBehavior;
+    const healthBarBehavior = enemy.getBehaviorByName(BehaviorName.HealthBar) as HealthBarBehavior;
     const projectileBehavior = projectile.getBehaviorByName(BehaviorName.Projectile) as ProjectileBehavior;
-    enemyBehavior.reduceHealth(ElementalSystem.calculateDamage(1, projectileBehavior.element, enemyBehavior.element));
+    healthBarBehavior.reduceHealth(ElementalSystem.calculateDamage(1, projectileBehavior.element, enemyBehavior.element), 0);
     projectile.dispose();
     // objects.splice(objects.indexOf(enemy), 1);
 }

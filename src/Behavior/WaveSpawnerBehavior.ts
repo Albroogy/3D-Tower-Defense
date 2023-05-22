@@ -77,7 +77,7 @@ export default class WaveSpawner extends UpdateableBehavior {
                 const enemyBehavior = new EnemyBehavior(3, enemyInfo.element, enemyInfo.health);
                 const tagBehavior = new TagBehavior([Tag.Enemy]);
                 
-                const healthBar = new HealthBar(enemyInfo.health, "red", 100, 10);
+                const healthBar = new HealthBar(Vector3.Zero(), enemyInfo.health, "red", 100, 10, true);
                 const healthBarBehavior = new HealthBarBehavior([healthBar]);
                 enemyContainerNode.addBehavior(enemyBehavior);
                 enemyContainerNode.addBehavior(tagBehavior);
