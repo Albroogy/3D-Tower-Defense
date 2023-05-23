@@ -20,54 +20,123 @@ const enemyParameterMap = {
     [EnemyType.Disc]: { radius: 2, tessellation: 20 },
 };
 
-// const enemyParameterMap = {
-//     [EnemyType.Sphere]: {},
-//     [EnemyType.Cube]: {},
-//     [EnemyType.Cylinder]: {},
-//     [EnemyType.Torus]: {},
-//     [EnemyType.TorusKnot]: {},
-//     [EnemyType.Disc]: {},
-//   };
+const waveElements = {
+    0: {
+        [ElementType.Fire]: 0.7,
+        [ElementType.Water]: 0.3,
+        [ElementType.Air]: 0,
+        [ElementType.Earth]: 0,
+        [ElementType.Metal]: 0
+    },
+    10: {
+        [ElementType.Fire]: 0.6,
+        [ElementType.Water]: 0.4,
+        [ElementType.Air]: 0,
+        [ElementType.Earth]: 0,
+        [ElementType.Metal]: 0
+    },
+    20: {
+        [ElementType.Fire]: 0.5,
+        [ElementType.Water]: 0.3,
+        [ElementType.Air]: 0.1,
+        [ElementType.Earth]: 0.05,
+        [ElementType.Metal]: 0.05
+    },
+    30: {
+        [ElementType.Fire]: 0.4,
+        [ElementType.Water]: 0.3,
+        [ElementType.Air]: 0.2,
+        [ElementType.Earth]: 0.05,
+        [ElementType.Metal]: 0.05
+    },
+    40: {
+        [ElementType.Fire]: 0.3,
+        [ElementType.Water]: 0.2,
+        [ElementType.Air]: 0.15,
+        [ElementType.Earth]: 0.2,
+        [ElementType.Metal]: 0.15
+    },
+    50: {
+        [ElementType.Fire]: 0.25,
+        [ElementType.Water]: 0.25,
+        [ElementType.Air]: 0.25,
+        [ElementType.Earth]: 0.15,
+        [ElementType.Metal]: 0.1
+    },
+    60: {
+        [ElementType.Fire]: 0.2,
+        [ElementType.Water]: 0.2,
+        [ElementType.Air]: 0.1,
+        [ElementType.Earth]: 0.15,
+        [ElementType.Metal]: 0.35
+    },
+    70: {
+        [ElementType.Fire]: 0.1,
+        [ElementType.Water]: 0.1,
+        [ElementType.Air]: 0.3,
+        [ElementType.Earth]: 0.25,
+        [ElementType.Metal]: 0.25
+    },
+    80: {
+        [ElementType.Fire]: 0.1,
+        [ElementType.Water]: 0.25,
+        [ElementType.Air]: 0.25,
+        [ElementType.Earth]: 0.2,
+        [ElementType.Metal]: 0.2
+    },
+    90: {
+        [ElementType.Fire]: 0.2,
+        [ElementType.Water]: 0.15,
+        [ElementType.Air]: 0.1,
+        [ElementType.Earth]: 0.35,
+        [ElementType.Metal]: 0.2
+    },
+    100: {
+        [ElementType.Fire]: 0.15,
+        [ElementType.Water]: 0.15,
+        [ElementType.Air]: 0.25,
+        [ElementType.Earth]: 0.25,
+        [ElementType.Metal]: 0.2
+    }
+}
 
-function generateRandomWave(waveLength: number): Array<SpawnInfo> {
+function generateRandomWave(waveLength: number, waveNumber: number): Array<SpawnInfo> {
     const wave: Array<SpawnInfo> = [];
+
+    const elementCounts = calculateElementCounts(waveNumber, waveLength);
   
-    for (let i = 0; i < waveLength; i++) {
+    for (let i = 1; i <= waveLength; i++) {
         const enemyType = getRandomEnumValue(EnemyType);
 
         let health: number;
-        let element: ElementType;
 
         switch (enemyType) {
             case EnemyType.Sphere:
                 health = 2;
-                element = ElementType.Fire;
                 break;
             case EnemyType.Cube:
                 health = 1;
-                element = ElementType.Earth;
                 break;
             case EnemyType.Cylinder:
                 health = 3;
-                element = ElementType.Water;
                 break;
             case EnemyType.Torus:
                 health = 5;
-                element = ElementType.Air;
                 break;
             case EnemyType.TorusKnot:
                 health = 15;
-                element = ElementType.Water;
                 break;
             case EnemyType.Disc:
                 health = 10;
-                element = ElementType.Fire;
                 break;
             default:
                 health = 2;
-                element = ElementType.Water;
-                console.log("DEFAULT")
+                console.log("DEFAULT");
         }
+
+        let element = getEnemyElement(elementCounts, i);
+
+        console.log(element);
 
         const spawnInfo: SpawnInfo = {
             parameters: enemyParameterMap[enemyType],
@@ -81,6 +150,35 @@ function generateRandomWave(waveLength: number): Array<SpawnInfo> {
   
     return wave;
 }
+
+type ElementCount = {
+    elementType: string;
+    elementCount: number;
+};
+
+function calculateElementCounts(waveIndex: number, totalEnemies: number): ElementCount[] {
+    const nextWaveThreshold = Math.ceil(waveIndex / 10) * 10;
+    const pastWaveThreshold = Math.floor(waveIndex / 10) * 10;
+
+    const elementCounts = Object.keys(ElementType).map(elementType => {
+        const elementPercentage = (waveIndex - pastWaveThreshold)  * (waveElements[nextWaveThreshold][elementType] - waveElements[pastWaveThreshold][elementType]) / 10;
+        const elementCount = Math.floor(totalEnemies * elementPercentage);
+        return { elementType, elementCount};
+    });
+
+    return elementCounts;
+}
+
+function getEnemyElement(elementCounts: ElementCount[], enemyIndex: number): ElementType {
+    let cumulativeCount = 0;
+    for (const { elementType, elementCount } of elementCounts) {
+        cumulativeCount += elementCount;
+        if (enemyIndex < cumulativeCount) {
+            return ElementType[elementType];
+        }
+    }
+}
+
 
 // create the canvas html element and attach it to the webpage
 var canvas = document.createElement("canvas");
@@ -121,13 +219,17 @@ class App {
         const cubeEnemy2: SpawnInfo = {parameters: {width: 0.5, depth: 0.5, height: 2.5},  type: EnemyType.Cube, health: 3, element: ElementType.Fire};
 
         const waves: Array<Array<SpawnInfo>> = [
-            generateRandomWave(3),
-            generateRandomWave(5),
-            generateRandomWave(8),
-            generateRandomWave(10),
-            [cubeEnemy2, cubeEnemy2, cubeEnemy2, cubeEnemy, cubeEnemy],
-            [sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy, sphereEnemy],
         ]
+
+        let waveSize = 0;
+
+        for (let i = 0; i < 100; i++) {
+            waveSize += 3;
+
+            const wave = generateRandomWave(waveSize, i);
+
+            waves.push(wave);
+        }
 
         console.log(waves)
 
@@ -343,20 +445,22 @@ function onPointerMove(eventData: PointerEvent) {
 
 const onPointerUp = (eventData: PointerEvent) => {
     // Get the mouse position relative to the canvas
-    const mousePosition = new Vector3(eventData.x, eventData.y, 0.99);
+    const mousePosition = new Vector3(scene.pointerX, scene.pointerY, 0.99);
+    console.log(scene.pointerX, scene.pointerY)
     const pickedPosition = Vector3.Unproject(
         mousePosition,
         engine.getRenderWidth(),
         engine.getRenderHeight(),
         Matrix.Identity(),
-        scene.activeCamera.getProjectionMatrix(),
+        scene.getProjectionMatrix(),
         scene.activeCamera.getWorldMatrix()
     );
     // If the tower is clicked, generate a new UpdateableNode with TowerBehavior
     const tower = new UpdateableNode("TowerNode", scene);
     tower.position = pickedPosition;
+    console.log(pickedPosition);
     const tagBehavior = new TagBehavior([Tag.Tower]);
-    const towerBehavior = new TowerBehavior(2.5, 100, ElementType.Fire); // Adjust the parameters as per your needs
+    const towerBehavior = new TowerBehavior(2.5, 100, ElementType.Fire);
     tower.addBehavior(towerBehavior);
     tower.addBehavior(tagBehavior);
 
