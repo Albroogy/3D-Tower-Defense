@@ -60,7 +60,6 @@ export default class WaveSpawner extends UpdateableBehavior {
                 let enemyContainerNode = new UpdateableNode("enemy", spawner.getScene());
                 let mesh: Mesh;
                 if (typeof createEnemyMesh[enemyInfo.type] === 'function') {
-                    console.log(createEnemyMesh[enemyInfo.type])
                     mesh = createEnemyMesh[enemyInfo.type]("enemyMesh", enemyInfo.parameters, spawner.getScene());
                 }
                 else {

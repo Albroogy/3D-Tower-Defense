@@ -1,7 +1,7 @@
 import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
 import "@babylonjs/loaders/glTF";
-import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, MeshBuilder, StandardMaterial, Matrix} from "@babylonjs/core";
+import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, MeshBuilder, StandardMaterial, Matrix, GroundMesh, Ray} from "@babylonjs/core";
 import WaveSpawnerBehavior, { EnemyType, SpawnInfo } from "./Behavior/WaveSpawnerBehavior";
 import UpdateableNodeManager from "./UpdateableNodeManager";
 import { TagBehavior } from "./Behavior/TagBehavior";
@@ -190,6 +190,7 @@ document.body.appendChild(canvas);
 // initialize babylon scene and engine
 var engine = new Engine(canvas, true);
 var scene = new Scene(engine);
+let ground: GroundMesh | undefined;
 
 class App {
     constructor() {
@@ -206,7 +207,7 @@ class App {
         camera.position.y += 500;
         var light1: HemisphericLight = new HemisphericLight("light1", new Vector3(1, 1, 0), scene);
 
-        const ground = MeshBuilder.CreateGround("ground", {width:100, height:100}, scene);
+        ground = MeshBuilder.CreateGround("ground", {width:100, height:100}, scene);
 
 
 
@@ -445,20 +446,19 @@ function onPointerMove(eventData: PointerEvent) {
 
 const onPointerUp = (eventData: PointerEvent) => {
     // Get the mouse position relative to the canvas
-    const mousePosition = new Vector3(scene.pointerX, scene.pointerY, 0.99);
-    console.log(scene.pointerX, scene.pointerY)
-    const pickedPosition = Vector3.Unproject(
-        mousePosition,
+
+    let r: Ray = Ray.CreateNew(scene.pointerX, scene.pointerY,
         engine.getRenderWidth(),
         engine.getRenderHeight(),
         Matrix.Identity(),
-        scene.getProjectionMatrix(),
-        scene.activeCamera.getWorldMatrix()
+        scene.getViewMatrix(),
+        scene.getProjectionMatrix()
     );
-    // If the tower is clicked, generate a new UpdateableNode with TowerBehavior
+    const pickingInfo = r.intersectsMesh(ground);
+    const finalPos = pickingInfo.pickedPoint;
+    finalPos.y = 1.25;
     const tower = new UpdateableNode("TowerNode", scene);
-    tower.position = pickedPosition;
-    console.log(pickedPosition);
+    tower.position = finalPos;
     const tagBehavior = new TagBehavior([Tag.Tower]);
     const towerBehavior = new TowerBehavior(2.5, 100, ElementType.Fire);
     tower.addBehavior(towerBehavior);
