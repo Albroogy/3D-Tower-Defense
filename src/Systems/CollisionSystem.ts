@@ -1,11 +1,11 @@
-import EnemyBehavior from "../Behavior/EnemyBehavior";
+import EnemyBehavior from "../Behaviors/EnemyBehavior";
 import { BehaviorName, objects, Tag } from "../Gobal";
-import { TagBehavior } from "../Behavior/TagBehavior";
-import TowerBehavior from "../Behavior/TowerBehaviour";
+import { TagBehavior } from "../Behaviors/TagBehavior";
+import TowerBehavior from "../Behaviors/TowerBehaviour";
 import UpdateableNode from "../UpdateableNode";
 import ElementalSystem from "./ElementalSystem";
-import ProjectileBehavior from "../Behavior/ProjectileBehavior";
-import HealthBarBehavior from "../Behavior/HealthBarBehavior";
+import ProjectileBehavior from "../Behaviors/ProjectileBehavior";
+import HealthBarBehavior from "../Behaviors/HealthBarBehavior";
 
 type Func = (object1: UpdateableNode, object2: UpdateableNode) => void;
 type Registry = { [tag: string]: { [subtag: string]: Func } }; 

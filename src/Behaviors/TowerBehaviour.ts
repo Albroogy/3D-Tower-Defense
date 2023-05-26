@@ -68,26 +68,31 @@ export default class TowerBehavior extends UpdateableBehavior {
     }
 
     public chooseTarget() {
-        // const findClosestByTag = (objects: Array<UpdateableNode>, tower: UpdateableNode): UpdateableNode | null => {
-        //     // const isObjectDisposedOf = (o: UpdateableNode) => !o.isDisposed();
-        //     const isObjectAnEnemy = (o: UpdateableNode) => (o.getBehaviorByName(BehaviorName.Tag) as TagBehavior)?.hasTag(Tag.Enemy);
-        //     const isEnemyInRadius = (e: UpdateableNode) => tower.position.subtract(e.position).lengthSquared() <= (tower.getBehaviorByName(BehaviorName.Tower) as TowerBehavior).towerAttackRadiusSquared;
+        const findClosestByTag = (objects: Array<UpdateableNode>, tower: UpdateableNode): UpdateableNode | null => {
+            // const isObjectDisposedOf = (o: UpdateableNode) => !o.isDisposed();
+
+            if (!this) {
+                return null;
+            }
+
+            const isObjectAnEnemy = (o: UpdateableNode) => (o.getBehaviorByName(BehaviorName.Tag) as TagBehavior)?.hasTag(Tag.Enemy);
+            const isEnemyInRadius = (e: UpdateableNode) => tower.position.subtract(e.position).lengthSquared() <= (tower.getBehaviorByName(BehaviorName.Tower) as TowerBehavior).towerAttackRadiusSquared;
           
-        //     const allPotentialEnemies = objects.filter(isObjectAnEnemy).filter(isEnemyInRadius);
+            const allPotentialEnemies = objects.filter(isObjectAnEnemy).filter(isEnemyInRadius);
           
-        //     if (allPotentialEnemies.length === 0) {
-        //       return null;
-        //     }
+            if (allPotentialEnemies.length === 0) {
+              return null;
+            }
           
-        //     const closestEnemy = allPotentialEnemies.reduce((closest, current) => {
-        //       const distanceToClosest = tower.position.subtract(closest.position).lengthSquared();
-        //       const distanceToCurrent = tower.position.subtract(current.position).lengthSquared();
-        //       return distanceToCurrent < distanceToClosest ? current : closest;
-        //     }, allPotentialEnemies[0]);
+            const closestEnemy = allPotentialEnemies.reduce((closest, current) => {
+              const distanceToClosest = tower.position.subtract(closest.position).lengthSquared();
+              const distanceToCurrent = tower.position.subtract(current.position).lengthSquared();
+              return distanceToCurrent < distanceToClosest ? current : closest;
+            }, allPotentialEnemies[0]);
           
-        //     return closestEnemy;
-        // };
-        // this.target = findClosestByTag(objects, this._node as UpdateableNode);
+            return closestEnemy;
+        };
+        this.target = findClosestByTag(objects, this._node as UpdateableNode);
     }
 
     public clearTarget() {

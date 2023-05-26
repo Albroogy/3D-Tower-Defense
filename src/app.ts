@@ -2,11 +2,11 @@ import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
 import "@babylonjs/loaders/glTF";
 import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, MeshBuilder, StandardMaterial, Matrix, GroundMesh, Ray} from "@babylonjs/core";
-import WaveSpawnerBehavior, { EnemyType, SpawnInfo } from "./Behavior/WaveSpawnerBehavior";
+import WaveSpawnerBehavior, { EnemyType, SpawnInfo } from "./Behaviors/WaveSpawnerBehavior";
 import UpdateableNodeManager from "./UpdateableNodeManager";
-import { TagBehavior } from "./Behavior/TagBehavior";
+import { TagBehavior } from "./Behaviors/TagBehavior";
 import UpdateableNode from "./UpdateableNode";
-import TowerBehavior from "./Behavior/TowerBehaviour";
+import TowerBehavior from "./Behaviors/TowerBehaviour";
 import { BehaviorName, objects, Tag, ElementType, getRandomEnumValue, ElementMaterial, ElementColor } from "./Gobal";
 import CollisionSystem from "./Systems/CollisionSystem";
 import { AdvancedDynamicTexture, Button, Control, Rectangle, TextBlock } from "@babylonjs/gui";
@@ -181,16 +181,16 @@ function getEnemyElement(elementCounts: ElementCount[], enemyIndex: number): Ele
 
 
 // create the canvas html element and attach it to the webpage
-var canvas = document.createElement("canvas");
+export const canvas = document.createElement("canvas");
 canvas.style.width = "100%";
 canvas.style.height = "100%";
 canvas.id = "gameCanvas";
 document.body.appendChild(canvas);
 
 // initialize babylon scene and engine
-var engine = new Engine(canvas, true);
-var scene = new Scene(engine);
-let ground: GroundMesh | undefined;
+export const engine = new Engine(canvas, true);
+export const scene = new Scene(engine);
+export let ground: GroundMesh | undefined;
 
 class App {
     constructor() {
