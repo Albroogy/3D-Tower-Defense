@@ -45,7 +45,6 @@ export class HealthBar {
         this._node = target;
         if (this._isAttached) {
             this._healthBarBackground.linkWithMesh(this._node);
-            this._healthBar.linkWithMesh(this._node)
         }
     }
     public update(): void {
