@@ -19,9 +19,13 @@ export default class CollisionSystem {
     };
 
     public static checkObjectsColliding(obj1: UpdateableNode, obj2: UpdateableNode): boolean | void {
+        obj1.computeWorldMatrix(true);
+        obj2.computeWorldMatrix(true);
         const mesh1 = obj1.getChildMeshes()[0];
         const mesh2 = obj2.getChildMeshes()[0];
         if (mesh1 && mesh2) {
+            mesh1.computeWorldMatrix(true);
+            mesh2.computeWorldMatrix(true);
             if (mesh1.intersectsMesh(mesh2)) {
                 this.matchPair(obj1, obj2);
             }
@@ -55,6 +59,7 @@ function projectileEnemyCollision(projectile: UpdateableNode, enemy: UpdateableN
     const healthBarBehavior = enemy.getBehaviorByName(BehaviorName.HealthBar) as HealthBarBehavior;
     const projectileBehavior = projectile.getBehaviorByName(BehaviorName.Projectile) as ProjectileBehavior;
     healthBarBehavior.reduceHealth(ElementalSystem.calculateDamage(1, projectileBehavior.element, enemyBehavior.element), 0);
+    projectile.setParent(null);
     projectile.dispose();
     // objects.splice(objects.indexOf(enemy), 1);
 }

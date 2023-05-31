@@ -44,7 +44,7 @@ export default class TowerBehavior extends UpdateableBehavior {
         towerGroudPosition.y = 0;
         const direction = targetPosition.subtract(towerGroudPosition).normalize();
 
-        let rockContainerNode = new UpdateableNode("Projectile-Container", this._node.getScene());
+        let rockContainerNode = new UpdateableNode("Projectile-Container" + this._node.getChildren().length, this._node.getScene());
         const projectileBehavior = new ProjectileBehavior(10, 10, direction, this.element);
         rockContainerNode.addBehavior(projectileBehavior);
         const tagBehavior = new TagBehavior([Tag.Projectile]);
@@ -68,7 +68,7 @@ export default class TowerBehavior extends UpdateableBehavior {
 
     public chooseTarget() {
         const findClosestByTag = (objects: Array<UpdateableNode>, tower: UpdateableNode): UpdateableNode | null => {
-            // const isObjectDisposedOf = (o: UpdateableNode) => !o.isDisposed();
+            const isObjectAlive = (o: UpdateableNode) => !o.isDisposed();
 
             if (!this) {
                 return null;
@@ -77,7 +77,7 @@ export default class TowerBehavior extends UpdateableBehavior {
             const isObjectAnEnemy = (o: UpdateableNode) => (o.getBehaviorByName(BehaviorName.Tag) as TagBehavior)?.hasTag(Tag.Enemy);
             const isEnemyInRadius = (e: UpdateableNode) => tower.position.subtract(e.position).lengthSquared() <= (tower.getBehaviorByName(BehaviorName.Tower) as TowerBehavior).towerAttackRadiusSquared;
           
-            const allPotentialEnemies = objects.filter(isObjectAnEnemy).filter(isEnemyInRadius);
+            const allPotentialEnemies = objects.filter(isObjectAnEnemy).filter(isEnemyInRadius).filter(isObjectAlive);
           
             if (allPotentialEnemies.length === 0) {
               return null;
@@ -100,6 +100,7 @@ export default class TowerBehavior extends UpdateableBehavior {
     }
 
     private shootIfTargetIsAvailable(): void {
+
         if (this.target) {
             if (this.target.isDisposed() || this._node.position.subtract(this.target.position).lengthSquared() > this.towerAttackRadiusSquared) {
                 this.clearTarget();

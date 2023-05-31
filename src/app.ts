@@ -268,34 +268,34 @@ class App {
         tower.addBehavior(tagBehavior);
 
 
-        const tower2 = new UpdateableNode("tower2", scene);
-        tower2.position.y = 1.25;
-        tower2.position.x = 10;
-        tower2.position.z = 10;
-        const towerBehavior2 = new TowerBehavior(2.5, 100, ElementType.Water);
-        const tagBehavior2 = new TagBehavior([Tag.Tower]);
-        tower2.addBehavior(towerBehavior2);
-        tower2.addBehavior(tagBehavior2);
+       //const tower2 = new UpdateableNode("tower2", scene);
+       //tower2.position.y = 1.25;
+       //tower2.position.x = 10;
+       //tower2.position.z = 10;
+       //const towerBehavior2 = new TowerBehavior(2.5, 100, ElementType.Water);
+       //const tagBehavior2 = new TagBehavior([Tag.Tower]);
+       //tower2.addBehavior(towerBehavior2);
+       //tower2.addBehavior(tagBehavior2);
 
-        
-        const tower3 = new UpdateableNode("tower3", scene);
-        tower3.position.y = 1.25;
-        tower3.position.x = 10;
-        tower3.position.z = -10;
-        tower3.addBehavior(new TowerBehavior(2.5, 100, ElementType.Air));
-        tower3.addBehavior(new TagBehavior([Tag.Tower]));
-        
-        const tower4 = new UpdateableNode("tower4", scene);
-        tower4.position.y = 1.25;
-        tower4.position.x = -10;
-        tower4.position.z = -10;
-        tower4.addBehavior(new TowerBehavior(2.5, 100, ElementType.Earth));
-        tower4.addBehavior(new TagBehavior([Tag.Tower]));
+       //
+       //const tower3 = new UpdateableNode("tower3", scene);
+       //tower3.position.y = 1.25;
+       //tower3.position.x = 10;
+       //tower3.position.z = -10;
+       //tower3.addBehavior(new TowerBehavior(2.5, 100, ElementType.Air));
+       //tower3.addBehavior(new TagBehavior([Tag.Tower]));
+       //
+       //const tower4 = new UpdateableNode("tower4", scene);
+       //tower4.position.y = 1.25;
+       //tower4.position.x = -10;
+       //tower4.position.z = -10;
+       //tower4.addBehavior(new TowerBehavior(2.5, 100, ElementType.Earth));
+       //tower4.addBehavior(new TagBehavior([Tag.Tower]));
 
         objects.push(tower);
-        objects.push(tower2);
-        objects.push(tower3);
-        objects.push(tower4);
+        //objects.push(tower2);
+        //objects.push(tower3);
+        //objects.push(tower4);
 
         const GameSystem = new UpdateableNode("gameSystem", scene);
 
