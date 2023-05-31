@@ -1,12 +1,13 @@
 import { Matrix, Ray } from "@babylonjs/core";
 import { AdvancedDynamicTexture, Button, Control, Rectangle, TextBlock } from "@babylonjs/gui";
 import { canvas, scene, engine, ground } from "../app"
-import { TagBehavior } from "../Behaviors/TagBehavior";
-import TowerBehavior from "../Behaviors/TowerBehaviour";
+import { TagBehavior } from "./TagBehavior";
+import TowerBehavior from "./TowerBehaviour";
 import { ElementType, objects, Tag } from "../Gobal";
+import UpdateableBehavior from "../UpdateableBehavior";
 import UpdateableNode from "../UpdateableNode";
 
-class CardUI {
+export class Card {
     private guiTexture: AdvancedDynamicTexture;
     private card: Rectangle;
 
@@ -36,6 +37,7 @@ class CardUI {
     this.card.left = `${positionX}px`;
     this.card.top = `${positionY}px`;
     this.guiTexture.addControl(this.card);
+    this.card.isVisible = false;
 
     // Create the title text block
     const titleBlock = new TextBlock();
@@ -79,77 +81,31 @@ class CardUI {
         this.card.isVisible = true;
       }
   }
-  
-  // Usage:
-  const cardUI = new CardUI(
-    "Fire Tower",
-    "Damage: 2\nHealth: 3\nAbility: None",
-    "Does fire damage",
-    (eventData) => {
-        canvas.addEventListener("pointermove", onPointerMove);
-        canvas.addEventListener("pointerup", onPointerUp);
-    },
-    canvas.width/2 - 150, // positionX
-    canvas.height/2 - 150, // positionY
-    200, // width in pixels
-    300 // height in pixels
-  );
-  
 
+export class CardHandBehavior extends UpdateableBehavior {
+    private _cards: Card[];
 
-  
-function onPointerMove(eventData: PointerEvent) {
-    const mouseX = eventData.clientX;
-    const mouseY = eventData.clientY;
-
-    // Update the card position
-    // card.left = `${mouseX}px`;
-    // card.top = `${mouseY}px`;
-};
-
-const onPointerUp = (eventData: PointerEvent) => {
-    // Get the mouse position relative to the canvas
-
-    let r: Ray = Ray.CreateNew(scene.pointerX, scene.pointerY,
-        engine.getRenderWidth(),
-        engine.getRenderHeight(),
-        Matrix.Identity(),
-        scene.getViewMatrix(),
-        scene.getProjectionMatrix()
-    );
-    const pickingInfo = r.intersectsMesh(ground);
-    const finalPos = pickingInfo.pickedPoint;
-    finalPos.y = 1.25;
-    const tower = new UpdateableNode("TowerNode", scene);
-    tower.position = finalPos;
-    const tagBehavior = new TagBehavior([Tag.Tower]);
-    const towerBehavior = new TowerBehavior(2.5, 100, ElementType.Fire);
-    tower.addBehavior(towerBehavior);
-    tower.addBehavior(tagBehavior);
-
-    objects.push(tower);
-};
-
-
-class CardHand {
-    private cards: CardUI[] = [];
-  
-    addCard(card: CardUI): void {
-      this.cards.push(card);
+    constructor(cards: Card[] = []) {
+      super();
+      this._cards = cards;
     }
   
-    removeCard(card: CardUI): void {
-      const index = this.cards.indexOf(card);
+    addCard(card: Card): void {
+      this._cards.push(card);
+    }
+  
+    removeCard(card: Card): void {
+      const index = this._cards.indexOf(card);
       if (index > -1) {
-        this.cards.splice(index, 1);
+        this._cards.splice(index, 1);
       }
     }
   
     hideAllCards(): void {
-      this.cards.forEach((card) => card.hide());
+      this._cards.forEach((card) => card.hide());
     }
   
     showAllCards(): void {
-      this.cards.forEach((card) => card.show());
+      this._cards.forEach((card) => card.show());
     }
 }

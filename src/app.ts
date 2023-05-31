@@ -7,9 +7,11 @@ import UpdateableNodeManager from "./UpdateableNodeManager";
 import { TagBehavior } from "./Behaviors/TagBehavior";
 import UpdateableNode from "./UpdateableNode";
 import TowerBehavior from "./Behaviors/TowerBehaviour";
-import { BehaviorName, objects, Tag, ElementType, getRandomEnumValue, ElementMaterial, ElementColor } from "./Gobal";
+import { BehaviorName, objects, Tag, ElementType, getRandomEnumValue, ElementMaterial, ElementColor, OFFSET } from "./Gobal";
 import CollisionSystem from "./Systems/CollisionSystem";
 import { AdvancedDynamicTexture, Button, Control, Rectangle, TextBlock } from "@babylonjs/gui";
+import { Card, CardHandBehavior } from "./Behaviors/CardHandBehavior";
+import GameBehavior from "./Behaviors/GameBehavior";
 
 const enemyParameterMap = {
     [EnemyType.Sphere]: { diameter: 2 },
@@ -131,12 +133,12 @@ function generateRandomWave(waveLength: number, waveNumber: number): Array<Spawn
                 break;
             default:
                 health = 2;
-                console.log("DEFAULT");
+                // console.log("DEFAULT");
         }
 
         let element = getEnemyElement(elementCounts, i);
 
-        console.log(element);
+        // console.log(element);
 
         const spawnInfo: SpawnInfo = {
             parameters: enemyParameterMap[enemyType],
@@ -157,11 +159,26 @@ type ElementCount = {
 };
 
 function calculateElementCounts(waveIndex: number, totalEnemies: number): ElementCount[] {
-    const nextWaveThreshold = Math.ceil(waveIndex / 10) * 10;
-    const pastWaveThreshold = Math.floor(waveIndex / 10) * 10;
+    let nextWaveThreshold = Math.ceil(waveIndex / 10) * 10;
+    let pastWaveThreshold = Math.floor(waveIndex / 10) * 10;
 
-    const elementCounts = Object.keys(ElementType).map(elementType => {
-        const elementPercentage = (waveIndex - pastWaveThreshold)  * (waveElements[nextWaveThreshold][elementType] - waveElements[pastWaveThreshold][elementType]) / 10;
+    if (nextWaveThreshold < 10) {
+        nextWaveThreshold = 10;
+    }
+
+    const elements = [];
+
+    for (const element of Object.keys(ElementType)) {
+        if (!isNaN(element as any as number)) {
+            continue;
+        }
+
+        elements.push(ElementType[element]);
+    }
+
+    const elementCounts = elements.map(elementType => {
+        const elementPercentage = (waveIndex - pastWaveThreshold + OFFSET) * (waveElements[nextWaveThreshold][elementType] - waveElements[pastWaveThreshold][elementType]) / 10;
+        // console.log((waveIndex - pastWaveThreshold + OFFSET), (waveElements[nextWaveThreshold][elementType]) / 10);
         const elementCount = Math.floor(totalEnemies * elementPercentage);
         return { elementType, elementCount};
     });
@@ -279,6 +296,47 @@ class App {
         objects.push(tower3);
         objects.push(tower4);
 
+        const GameSystem = new UpdateableNode("gameSystem", scene);
+
+        // setTimeout(() => {
+        //     const fireCard = new Card(
+        //         "Fire Tower",
+        //         "Damage: 2\nHealth: 3\nAbility: None",
+        //         "Does fire damage",
+        //         (eventData) => {
+        //             canvas.addEventListener("pointermove", onPointerMove);
+        //             canvas.addEventListener("pointerup", onPointerUp);
+        //         },
+        //         canvas.width/2 - 150, // positionX
+        //         canvas.height/2 - 150, // positionY
+        //         200, // width in pixels
+        //         300 // height in pixels
+        //     );
+    
+        //     const waterCard = new Card(
+        //         "Water Tower",
+        //         "Damage: 2\nHealth: 3\nAbility: None",
+        //         "Does fire damage",
+        //         (eventData) => {
+        //             canvas.addEventListener("pointermove", onPointerMove);
+        //             canvas.addEventListener("pointerup", onPointerUp);
+        //         },
+        //         canvas.width/2 + 250, // positionX
+        //         canvas.height/2 - 150, // positionY
+        //         200, // width in pixels
+        //         300 // height in pixels
+        //     );
+    
+        //     const cards = [fireCard, waterCard];
+    
+        //     const cardHand = new CardHandBehavior(cards);
+        //     const gameBehavior = new GameBehavior();
+    
+        //     GameSystem.addBehavior(cardHand);
+        //     GameSystem.addBehavior(gameBehavior);
+        // }, 2000);
+
+
         // hide/show the Inspector
         window.addEventListener("keydown", (ev) => {
             // Shift+Ctrl+Alt+I
@@ -300,18 +358,17 @@ class App {
                 if (!tag1) {
                     continue;
                 }
-                if (tag1.tags.includes(Tag.Projectile)) {
-                    const tower = object1 as UpdateableNode;
-                    for (const object2 of objects) {
-                        const tag2 = object2.getBehaviorByName(BehaviorName.Tag) as TagBehavior;
-                        if (tag2 != null) {
-                            if (tag2.tags.includes(Tag.Enemy)) {
-                                const enemy = object2 as UpdateableNode;
-                                CollisionSystem.checkObjectsColliding(tower, enemy);
-                            }
-                        }
-                    }
-                }
+                const tower = object1 as UpdateableNode;
+
+                objects
+                  .filter(object2 => {
+                    const tag2 = object2.getBehaviorByName(BehaviorName.Tag) as TagBehavior;
+                    return tag2 != null && tag2.tags.includes(Tag.Enemy);
+                })
+                  .forEach(object2 => {
+                    const enemy = object2 as UpdateableNode;
+                    CollisionSystem.checkObjectsColliding(tower, enemy);
+                });
             }
             //sphere.position.x += dt / 1000 * 5;
             scene.render();
@@ -349,92 +406,6 @@ new App();
 // enemiesInWaveText.left = "20px";
 // gui.addControl(enemiesInWaveText);
 
-const cardsGUI = AdvancedDynamicTexture.CreateFullscreenUI("UI");
-
-class CardUI {
-    private guiTexture: AdvancedDynamicTexture;
-    private card: Rectangle;
-
-    constructor(
-    title: string,
-    content: string,
-    buttonText: string,
-    buttonAction: (eventData: any) => void,
-    positionX: number,
-    positionY: number,
-    width: number,
-    height: number
-    ) {
-    // Create the GUI texture
-    this.guiTexture = AdvancedDynamicTexture.CreateFullscreenUI("UI");
-
-    // Create the card rectangle
-    this.card = new Rectangle();
-    this.card.width = `${width}px`;
-    this.card.height = `${height}px`;
-    this.card.cornerRadius = 10;
-    this.card.color = "white";
-    this.card.thickness = 3;
-    this.card.background = "linear-gradient(to bottom, #bbbbbb, #ffffff)";
-    this.card.paddingBottom = "15px";
-    this.card.paddingTop = "10px";
-    this.card.left = `${positionX}px`;
-    this.card.top = `${positionY}px`;
-    this.guiTexture.addControl(this.card);
-
-    // Create the title text block
-    const titleBlock = new TextBlock();
-    titleBlock.text = title;
-    titleBlock.fontSize = "24px";
-    titleBlock.color = "black";
-    titleBlock.textHorizontalAlignment = Control.HORIZONTAL_ALIGNMENT_CENTER;
-    titleBlock.top = 10;
-    this.card.addControl(titleBlock);
-
-    // Create the content text block
-    const contentBlock = new TextBlock();
-    contentBlock.text = content;
-    contentBlock.fontSize = "18px";
-    contentBlock.color = "black";
-    contentBlock.textWrapping = true;
-    contentBlock.top = 50;
-    contentBlock.left = 5;
-    contentBlock.width = 0.9;
-    this.card.addControl(contentBlock);
-
-    // Create the button
-    const button = Button.CreateSimpleButton("button", buttonText);
-    button.width = `${width}px`;
-    button.height = `${height}px`;
-    button.color = "transparent"; // Make the button text color transparent
-    button.background = "transparent"; // Make the button background transparent
-    button.cornerRadius = 5;
-    button.thickness = 0;
-    button.onPointerDownObservable.add(buttonAction);
-    button.left = `${(width - button.widthInPixels) / 2}px`;
-    button.top = `${(height - button.heightInPixels) / 2}px`;
-    this.card.addControl(button);
-    }
-  }
-  
-  // Usage:
-  const cardUI = new CardUI(
-    "Fire Tower",
-    "Damage: 2\nHealth: 3\nAbility: None",
-    "Does fire damage",
-    (eventData) => {
-        canvas.addEventListener("pointermove", onPointerMove);
-        canvas.addEventListener("pointerup", onPointerUp);
-    },
-    canvas.width/2 - 150, // positionX
-    canvas.height/2 - 150, // positionY
-    200, // width in pixels
-    300 // height in pixels
-  );
-  
-
-
-  
 function onPointerMove(eventData: PointerEvent) {
     const mouseX = eventData.clientX;
     const mouseY = eventData.clientY;
@@ -444,7 +415,7 @@ function onPointerMove(eventData: PointerEvent) {
     // card.top = `${mouseY}px`;
 };
 
-const onPointerUp = (eventData: PointerEvent) => {
+const onPointerUp = (elementType: ElementType, eventData: PointerEvent) => {
     // Get the mouse position relative to the canvas
 
     let r: Ray = Ray.CreateNew(scene.pointerX, scene.pointerY,
@@ -460,9 +431,80 @@ const onPointerUp = (eventData: PointerEvent) => {
     const tower = new UpdateableNode("TowerNode", scene);
     tower.position = finalPos;
     const tagBehavior = new TagBehavior([Tag.Tower]);
-    const towerBehavior = new TowerBehavior(2.5, 100, ElementType.Fire);
+    const towerBehavior = new TowerBehavior(2.5, 100, elementType);
     tower.addBehavior(towerBehavior);
     tower.addBehavior(tagBehavior);
 
     objects.push(tower);
 };
+
+
+const GameSystem = new UpdateableNode("gameSystem", scene);
+
+const fireCard = new Card(
+    "Fire Tower",
+    "Damage: 2\nHealth: 3\nAbility: None",
+    "Does fire damage",
+    (eventData) => {
+        canvas.addEventListener("pointermove", onPointerMove);
+        const pointerUp = onPointerUp.bind(undefined, ElementType.Fire)
+        canvas.addEventListener("pointerup", pointerUp);
+    },
+    canvas.width/2 - 150, // positionX
+    canvas.height/2 - 150, // positionY
+    200, // width in pixels
+    300 // height in pixels
+);
+
+const waterCard = new Card(
+    "Water Tower",
+    "Damage: 2\nHealth: 3\nAbility: None",
+    "Does water damage",
+    (eventData) => {
+        canvas.addEventListener("pointermove", onPointerMove);
+        const pointerUp = onPointerUp.bind(undefined, ElementType.Water)
+        canvas.addEventListener("pointerup", pointerUp);
+    },
+    canvas.width/2 - 400, // positionX
+    canvas.height/2 - 150, // positionY
+    200, // width in pixels
+    300 // height in pixels
+);
+
+const earthCard = new Card(
+    "Earth Tower",
+    "Damage: 2\nHealth: 3\nAbility: None",
+    "Does earth damage",
+    (eventData) => {
+        canvas.addEventListener("pointermove", onPointerMove);
+        const pointerUp = onPointerUp.bind(undefined, ElementType.Earth)
+        canvas.addEventListener("pointerup", pointerUp);
+    },
+    canvas.width/2 - 650, // positionX
+    canvas.height/2 - 150, // positionY
+    200, // width in pixels
+    300 // height in pixels
+);
+
+const airCard = new Card(
+    "Air Tower",
+    "Damage: 2\nHealth: 3\nAbility: None",
+    "Does air damage",
+    (eventData) => {
+        canvas.addEventListener("pointermove", onPointerMove);
+        const pointerUp = onPointerUp.bind(undefined, ElementType.Air)
+        canvas.addEventListener("pointerup", pointerUp);
+    },
+    canvas.width/2 - 900, // positionX
+    canvas.height/2 - 150, // positionY
+    200, // width in pixels
+    300 // height in pixels
+);
+
+const cards = [fireCard, waterCard, earthCard, airCard];
+
+const cardHand = new CardHandBehavior(cards);
+const gameBehavior = new GameBehavior();
+
+GameSystem.addBehavior(cardHand);
+GameSystem.addBehavior(gameBehavior);

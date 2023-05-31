@@ -1,6 +1,33 @@
 import { Color3, StandardMaterial } from "@babylonjs/core";
 import UpdateableNode from "./UpdateableNode";
 
+// Key Information
+export const allPressedKeys: Record<string, boolean> = {};
+window.addEventListener("keydown", function (event) {
+    allPressedKeys[event.keyCode] = true;
+});
+window.addEventListener("keyup", function (event) {
+    allPressedKeys[event.keyCode] = false;
+});
+export const KEYS = {
+    W: 87,
+    S: 83,
+    A: 65,
+    D: 68,
+    Space: 32,
+    ArrowLeft: 37,
+    ArrowRight: 39,
+    ArrowUp: 38,
+    ArrowDown: 40,
+    SpaceBar: 32,
+    Escape: 27,
+    E: 69,
+    One: 49,
+    Two: 50,
+    Three: 51,
+    Four: 52,
+};
+
 export enum BehaviorName {
     Enemy = "Enemy",
     Projectile = "Projectile",

@@ -7,18 +7,17 @@ import UpdateableNode from "../UpdateableNode";
 
 export default class TowerBehavior extends UpdateableBehavior {
     public name = BehaviorName.Tower;
-
-    private _node: TransformNode | null = null;
+    
     private _mesh: Mesh | null = null;
 
     private _timerId: any;
 
-    public target: null | TransformNode = null;
+    public target: null | UpdateableNode = null;
     constructor(private _attackSpeed: number, private _towerAttackRadius: number, public element: ElementType) {
         super();
     }
 
-    public attach(target: TransformNode): void {
+    public attach(target: UpdateableNode): void {
         this._node = target;
         
         this._mesh = MeshBuilder.CreateBox("towerMesh1", {
@@ -98,7 +97,6 @@ export default class TowerBehavior extends UpdateableBehavior {
     public clearTarget() {
         clearInterval(this._timerId);
         this.target = null;
-        console.log("clearTarget")
     }
 
     private shootIfTargetIsAvailable(): void {

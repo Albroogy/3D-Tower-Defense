@@ -5,8 +5,6 @@ import UpdateableNode from "../UpdateableNode";
 
 export default class ProjectileBehavior extends UpdateableBehavior{
     public name = BehaviorName.Projectile;
-    
-    private _node: UpdateableNode | null = null;
 
     constructor(private _speed: number, private _damage: number, private _direction: Vector3, public element: ElementType) {
         super();

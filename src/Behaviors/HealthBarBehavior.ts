@@ -50,6 +50,7 @@ export class HealthBar {
     }
     public update(): void {
         this._healthBar.width = (this._currentHealth / this._maxHealth) * 100 + "%";
+        // console.log((this._currentHealth / this._maxHealth) * 100 + "%")
     }
     public setHealth(health: number): void {
         this._currentHealth = health;
@@ -66,8 +67,6 @@ export class HealthBar {
 
 export default class HealthBarBehavior extends UpdateableBehavior { 
     public name = BehaviorName.HealthBar;
-
-    private _node: UpdateableNode
 
     private _healthBars: Array<HealthBar>;
 

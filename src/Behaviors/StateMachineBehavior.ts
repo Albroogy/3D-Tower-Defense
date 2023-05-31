@@ -44,9 +44,7 @@ export class StateMachine<StateEnum extends string> {
 }
 
 export default class StateMachineBehavior<StateEnum extends string> extends UpdateableBehavior {
-    public static COMPONENT_ID: string = "StateMachine";
-
-    private _node: UpdateableNode;
+    public name: string = "StateMachine";
     
     public activate(initialState: StateEnum) {
         console.assert(this._node != null);

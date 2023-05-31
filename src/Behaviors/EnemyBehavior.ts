@@ -1,11 +1,10 @@
 import { Space, TransformNode, Vector3 } from "@babylonjs/core";
 import { BehaviorName, ElementType } from "../Gobal";
 import UpdateableBehavior from "../UpdateableBehavior";
+import UpdateableNode from "../UpdateableNode";
 
 export default class EnemyBehavior extends UpdateableBehavior {
     public name = BehaviorName.Enemy;
-
-    private _node: TransformNode | null = null;
 
     public speed: number;
     public element: ElementType;
@@ -16,7 +15,7 @@ export default class EnemyBehavior extends UpdateableBehavior {
         this.element = element;
     }
 
-    public attach(target: TransformNode): void {
+    public attach(target: UpdateableNode): void {
         this._node = target;
     }
 

@@ -47,11 +47,11 @@ export default class WaveSpawner extends UpdateableBehavior {
     
     public currentWave: number = 0;
 
-    public attach(spawner: TransformNode): void {
+    public attach(spawner: UpdateableNode): void {
         this.spawnWave(spawner);
     }
 
-    public spawnWave(spawner: TransformNode): void {
+    public spawnWave(spawner: UpdateableNode): void {
         let enemyIndex = 0;
         this._timerId = setInterval(() => {
             if (enemyIndex < this.waveInfo[this.currentWave].length) {
