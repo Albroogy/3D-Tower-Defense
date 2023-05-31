@@ -14,9 +14,11 @@ export let gameState: GameState = GameState.Playing;
 export default class GameBehavior extends UpdateableBehavior {
     public static COMPONENT_ID: string = "Game";
 
-    public onAttached(): void {
+    public attach(target: UpdateableNode): void {
+        this._node = target;
         const stateMachineBehavior = this._node.getBehaviorByName("StateMachine") as StateMachineBehavior<GameState>;
         stateMachineBehavior.stateMachine.addState(GameState.Playing, onPlayingActivation, onPlayingUpdate, onPlayingDeactivation);
+        stateMachineBehavior.stateMachine.addState(GameState.PlacingTowers, onPlacingTowersActivation, onPlacingTowersUpdate, onPlacingTowersDeactivation);
         stateMachineBehavior.activate(GameState.Playing);
     }
 }
@@ -36,9 +38,9 @@ export const onPlayingDeactivation = () => {
 
 export const onPlacingTowersActivation = (currentObject: UpdateableNode) => {
     gameState = GameState.PlacingTowers;
-    const cardHandBehavior = currentObject.getBehaviorByName("StateMachine") as CardHandBehavior;
+    const cardHandBehavior = currentObject.getBehaviorByName("CardHand") as CardHandBehavior;
     cardHandBehavior.showAllCards();
-    console.log(GameState.PlacingTowers)
+    console.log(GameState.PlacingTowers);
 }
 export const onPlacingTowersUpdate = (): GameState | undefined => {
     if (allPressedKeys[KEYS.Escape]){

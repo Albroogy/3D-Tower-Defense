@@ -83,6 +83,8 @@ export class Card {
   }
 
 export class CardHandBehavior extends UpdateableBehavior {
+    public name = "CardHand";
+    
     private _cards: Card[];
 
     constructor(cards: Card[] = []) {
@@ -90,22 +92,22 @@ export class CardHandBehavior extends UpdateableBehavior {
       this._cards = cards;
     }
   
-    addCard(card: Card): void {
+    public addCard(card: Card): void {
       this._cards.push(card);
     }
   
-    removeCard(card: Card): void {
+    public removeCard(card: Card): void {
       const index = this._cards.indexOf(card);
       if (index > -1) {
         this._cards.splice(index, 1);
       }
     }
   
-    hideAllCards(): void {
+    public hideAllCards(): void {
       this._cards.forEach((card) => card.hide());
     }
   
-    showAllCards(): void {
+    public showAllCards(): void {
       this._cards.forEach((card) => card.show());
     }
 }

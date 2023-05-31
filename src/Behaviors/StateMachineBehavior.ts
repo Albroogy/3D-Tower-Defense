@@ -45,16 +45,20 @@ export class StateMachine<StateEnum extends string> {
 
 export default class StateMachineBehavior<StateEnum extends string> extends UpdateableBehavior {
     public name: string = "StateMachine";
+
+    public attach(target: UpdateableNode): void {
+        this._node = target;
+    }
     
     public activate(initialState: StateEnum) {
         console.assert(this._node != null);
         this.stateMachine.activeState = this.stateMachine.states[initialState];
-        this.stateMachine.activeState.onActivation(this._node!);
+        this.stateMachine.activeState.onActivation(this._node);
     }
 
-    public update(deltaTime: number): void {
+    public update(dt: number): void {
         if (this._node) {
-            this.stateMachine.update(deltaTime, this._node);
+            this.stateMachine.update(dt, this._node);
         }
     }
 

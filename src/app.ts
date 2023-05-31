@@ -12,6 +12,7 @@ import CollisionSystem from "./Systems/CollisionSystem";
 import { AdvancedDynamicTexture, Button, Control, Rectangle, TextBlock } from "@babylonjs/gui";
 import { Card, CardHandBehavior } from "./Behaviors/CardHandBehavior";
 import GameBehavior from "./Behaviors/GameBehavior";
+import StateMachineBehavior from "./Behaviors/StateMachineBehavior";
 
 const enemyParameterMap = {
     [EnemyType.Sphere]: { diameter: 2 },
@@ -502,6 +503,9 @@ const airCard = new Card(
 );
 
 const cards = [fireCard, waterCard, earthCard, airCard];
+
+const stateMachineBehavior = new StateMachineBehavior();
+GameSystem.addBehavior(stateMachineBehavior);
 
 const cardHand = new CardHandBehavior(cards);
 const gameBehavior = new GameBehavior();
