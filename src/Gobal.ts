@@ -1,14 +1,7 @@
 import { Color3, StandardMaterial } from "@babylonjs/core";
 import UpdateableNode from "./UpdateableNode";
-
-// Key Information
 export const allPressedKeys: Record<string, boolean> = {};
-window.addEventListener("keydown", function (event) {
-    allPressedKeys[event.keyCode] = true;
-});
-window.addEventListener("keyup", function (event) {
-    allPressedKeys[event.keyCode] = false;
-});
+
 export const KEYS = {
     W: 87,
     S: 83,
@@ -26,7 +19,9 @@ export const KEYS = {
     Two: 50,
     Three: 51,
     Four: 52,
+    P: 80
 };
+
 
 export enum BehaviorName {
     Enemy = "Enemy",
@@ -34,7 +29,11 @@ export enum BehaviorName {
     Tower = "Tower",
     Tag = "Tag",
     WaveSpawner = "WaveSpawner",
-    HealthBar = "HealthBar"
+    HealthBar = "HealthBar",
+    Timer = "Timer",
+    StateMachine = "StateMachine",
+    CardHand = "CardHand",
+    UIOverlay = "UIOverlay",
 }
 
 export enum Tag {
@@ -51,6 +50,11 @@ export enum ElementType {
     Water,
     Air,
     Metal,
+}
+
+export enum TimerMode {
+    Interval,
+    Timeout
 }
 
 export const ElementColor: Record<ElementType, Color3> = {
@@ -75,6 +79,9 @@ export const OFFSET = 1;
 
 export function getRandomEnumValue<T>(anEnum: T): T[keyof T] {
     const enumValues = Object.values(anEnum);
+    console.log(enumValues);
     const randomIndex = Math.floor(Math.random() * enumValues.length);
     return enumValues[randomIndex] as T[keyof T];
 }
+
+export const IN_GAME_SECOND: number = 1000;

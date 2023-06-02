@@ -1,4 +1,4 @@
-import { allPressedKeys, KEYS } from "../Gobal";
+import { allPressedKeys, BehaviorName, KEYS } from "../Gobal";
 import UpdateableBehavior from "../UpdateableBehavior";
 import UpdateableNode from "../UpdateableNode";
 import { CardHandBehavior } from "./CardHandBehavior";
@@ -16,7 +16,7 @@ export default class GameBehavior extends UpdateableBehavior {
 
     public attach(target: UpdateableNode): void {
         this._node = target;
-        const stateMachineBehavior = this._node.getBehaviorByName("StateMachine") as StateMachineBehavior<GameState>;
+        const stateMachineBehavior = this._node.getBehaviorByName(BehaviorName.StateMachine) as StateMachineBehavior<GameState>;
         stateMachineBehavior.stateMachine.addState(GameState.Playing, onPlayingActivation, onPlayingUpdate, onPlayingDeactivation);
         stateMachineBehavior.stateMachine.addState(GameState.PlacingTowers, onPlacingTowersActivation, onPlacingTowersUpdate, onPlacingTowersDeactivation);
         stateMachineBehavior.activate(GameState.Playing);
@@ -38,7 +38,7 @@ export const onPlayingDeactivation = () => {
 
 export const onPlacingTowersActivation = (currentObject: UpdateableNode) => {
     gameState = GameState.PlacingTowers;
-    const cardHandBehavior = currentObject.getBehaviorByName("CardHand") as CardHandBehavior;
+    const cardHandBehavior = currentObject.getBehaviorByName(BehaviorName.CardHand) as CardHandBehavior;
     cardHandBehavior.showAllCards();
     console.log(GameState.PlacingTowers);
 }
@@ -48,6 +48,6 @@ export const onPlacingTowersUpdate = (): GameState | undefined => {
     }
 }
 export const onPlacingTowersDeactivation = (currentObject: UpdateableNode) => {
-    const cardHandBehavior = currentObject.getBehaviorByName("StateMachine") as CardHandBehavior;
+    const cardHandBehavior = currentObject.getBehaviorByName(BehaviorName.CardHand) as CardHandBehavior;
     cardHandBehavior.hideAllCards();
 }

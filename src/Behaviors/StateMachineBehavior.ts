@@ -1,3 +1,4 @@
+import { BehaviorName } from "../Gobal";
 import UpdateableBehavior from "../UpdateableBehavior";
 import UpdateableNode from "../UpdateableNode";
 
@@ -44,7 +45,7 @@ export class StateMachine<StateEnum extends string> {
 }
 
 export default class StateMachineBehavior<StateEnum extends string> extends UpdateableBehavior {
-    public name: string = "StateMachine";
+    public name: string = BehaviorName.StateMachine;
 
     public attach(target: UpdateableNode): void {
         this._node = target;

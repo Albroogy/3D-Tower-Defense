@@ -54,12 +54,16 @@ export default class CollisionSystem {
     }
 }
 
+enum BarType { 
+    Health,
+    Armor 
+}
+
 function projectileEnemyCollision(projectile: UpdateableNode, enemy: UpdateableNode) {
     const enemyBehavior = enemy.getBehaviorByName(BehaviorName.Enemy) as EnemyBehavior;
     const healthBarBehavior = enemy.getBehaviorByName(BehaviorName.HealthBar) as HealthBarBehavior;
     const projectileBehavior = projectile.getBehaviorByName(BehaviorName.Projectile) as ProjectileBehavior;
-    healthBarBehavior.reduceHealth(ElementalSystem.calculateDamage(1, projectileBehavior.element, enemyBehavior.element), 0);
-    projectile.setParent(null);
+    healthBarBehavior.reduceHealth(ElementalSystem.calculateDamage(1, projectileBehavior.element, enemyBehavior.element), BarType.Health);
     projectile.dispose();
     // objects.splice(objects.indexOf(enemy), 1);
 }

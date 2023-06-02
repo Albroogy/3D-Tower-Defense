@@ -1,11 +1,6 @@
-import { Matrix, Ray } from "@babylonjs/core";
 import { AdvancedDynamicTexture, Button, Control, Rectangle, TextBlock } from "@babylonjs/gui";
-import { canvas, scene, engine, ground } from "../app"
-import { TagBehavior } from "./TagBehavior";
-import TowerBehavior from "./TowerBehaviour";
-import { ElementType, objects, Tag } from "../Gobal";
+import { BehaviorName } from "../Gobal";
 import UpdateableBehavior from "../UpdateableBehavior";
-import UpdateableNode from "../UpdateableNode";
 
 export class Card {
     private guiTexture: AdvancedDynamicTexture;
@@ -83,7 +78,7 @@ export class Card {
   }
 
 export class CardHandBehavior extends UpdateableBehavior {
-    public name = "CardHand";
+    public name = BehaviorName.CardHand;
     
     private _cards: Card[];
 

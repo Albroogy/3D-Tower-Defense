@@ -1,9 +1,10 @@
 import { Color3, Mesh, MeshBuilder, Space, StandardMaterial, TransformNode, Vector3 } from "@babylonjs/core";
-import { BehaviorName, objects, Tag, ElementType, ElementColor, ElementMaterial as ElementMaterial } from "../Gobal";
+import { BehaviorName, objects, Tag, ElementType, ElementColor, ElementMaterial as ElementMaterial, IN_GAME_SECOND, TimerMode } from "../Gobal";
 import ProjectileBehavior from "./ProjectileBehavior";
 import { TagBehavior } from "./TagBehavior";
 import UpdateableBehavior from "../UpdateableBehavior";
 import UpdateableNode from "../UpdateableNode";
+import { TimerBehavior } from "./TimerBehavior";
 
 export default class TowerBehavior extends UpdateableBehavior {
     public name = BehaviorName.Tower;
@@ -32,7 +33,9 @@ export default class TowerBehavior extends UpdateableBehavior {
 
         this._mesh.setParent(this._node);
         this._mesh.setPositionWithLocalVector(Vector3.ZeroReadOnly);
-        this.shootIfTargetIsAvailable();
+
+        const timerBehavior = this._node.getBehaviorByName(BehaviorName.Timer) as TimerBehavior;
+        timerBehavior.start(() => this.shootIfTargetIsAvailable(), IN_GAME_SECOND/this._attackSpeed, TimerMode.Interval);
     }
 
     public attackTarget(): void {
@@ -44,7 +47,7 @@ export default class TowerBehavior extends UpdateableBehavior {
         towerGroudPosition.y = 0;
         const direction = targetPosition.subtract(towerGroudPosition).normalize();
 
-        let rockContainerNode = new UpdateableNode("Projectile-Container" + this._node.getChildren().length, this._node.getScene());
+        let rockContainerNode = new UpdateableNode("Projectile-Container", this._node.getScene());
         const projectileBehavior = new ProjectileBehavior(10, 10, direction, this.element);
         rockContainerNode.addBehavior(projectileBehavior);
         const tagBehavior = new TagBehavior([Tag.Projectile]);
@@ -68,7 +71,7 @@ export default class TowerBehavior extends UpdateableBehavior {
 
     public chooseTarget() {
         const findClosestByTag = (objects: Array<UpdateableNode>, tower: UpdateableNode): UpdateableNode | null => {
-            const isObjectAlive = (o: UpdateableNode) => !o.isDisposed();
+            // const isObjectDisposedOf = (o: UpdateableNode) => !o.isDisposed();
 
             if (!this) {
                 return null;
@@ -77,7 +80,7 @@ export default class TowerBehavior extends UpdateableBehavior {
             const isObjectAnEnemy = (o: UpdateableNode) => (o.getBehaviorByName(BehaviorName.Tag) as TagBehavior)?.hasTag(Tag.Enemy);
             const isEnemyInRadius = (e: UpdateableNode) => tower.position.subtract(e.position).lengthSquared() <= (tower.getBehaviorByName(BehaviorName.Tower) as TowerBehavior).towerAttackRadiusSquared;
           
-            const allPotentialEnemies = objects.filter(isObjectAnEnemy).filter(isEnemyInRadius).filter(isObjectAlive);
+            const allPotentialEnemies = objects.filter(isObjectAnEnemy).filter(isEnemyInRadius);
           
             if (allPotentialEnemies.length === 0) {
               return null;
@@ -95,12 +98,10 @@ export default class TowerBehavior extends UpdateableBehavior {
     }
 
     public clearTarget() {
-        clearInterval(this._timerId);
         this.target = null;
     }
 
     private shootIfTargetIsAvailable(): void {
-
         if (this.target) {
             if (this.target.isDisposed() || this._node.position.subtract(this.target.position).lengthSquared() > this.towerAttackRadiusSquared) {
                 this.clearTarget();
@@ -112,8 +113,6 @@ export default class TowerBehavior extends UpdateableBehavior {
         if (this.target) {
             this.attackTarget();
         }
-
-        this._timerId = setTimeout(() => this.shootIfTargetIsAvailable(), 1000/this._attackSpeed);
     }
 
     get towerAttackRadius(){
