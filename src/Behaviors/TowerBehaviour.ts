@@ -11,8 +11,6 @@ export default class TowerBehavior extends UpdateableBehavior {
     
     private _mesh: Mesh | null = null;
 
-    private _timerId: any;
-
     public target: null | UpdateableNode = null;
     constructor(private _attackSpeed: number, private _towerAttackRadius: number, public element: ElementType) {
         super();

@@ -9,7 +9,7 @@ export class HealthBar {
     private _healthBar: Rectangle;
 
     private _guiTexture = AdvancedDynamicTexture.CreateFullscreenUI("UI");
-    private _position: Vector3;
+
     private _maxHealth: number;
     private _currentHealth: number;
     private _color: string;
@@ -18,14 +18,13 @@ export class HealthBar {
     private _isAttached: boolean;
     private _node: UpdateableNode;
 
-    constructor(position: Vector3, maxHealth: number, color: string, width: number, height: number, isAttached: boolean) {
+    constructor(maxHealth: number, color: string, width: number, height: number, isAttached: boolean) {
         this._maxHealth = maxHealth;
         this._currentHealth = maxHealth;
         this._color = color;
         this._width = width;
         this._height = height;
         this._isAttached = isAttached;
-        this._position = position;
 
         this._healthBarBackground = new Rectangle("healthBarBackground");
         this._healthBarBackground.width = this._width + "px";
@@ -48,8 +47,15 @@ export class HealthBar {
         }
     }
     public update(): void {
-        this._healthBar.width = (this._currentHealth / this._maxHealth) * 100 + "%";
-        // console.log((this._currentHealth / this._maxHealth) * 100 + "%")
+        const healthPercentage = this._currentHealth / this._maxHealth;
+        const healthBarWidth = healthPercentage * this._width;
+        const remainingWidth = this._width - healthBarWidth;
+      
+        // Update the width of the health bar
+        this._healthBar.width = healthBarWidth + "px";
+      
+        // Adjust the position of the health bar
+        this._healthBar.leftInPixels = -remainingWidth;
     }
     public setHealth(health: number): void {
         this._currentHealth = health;

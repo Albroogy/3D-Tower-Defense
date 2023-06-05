@@ -19,7 +19,10 @@ export const KEYS = {
     Two: 50,
     Three: 51,
     Four: 52,
-    P: 80
+    P: 80,
+    Plus: 187,
+    Minus: 189,
+    ZERO: 48,
 };
 
 
@@ -65,7 +68,7 @@ export const ElementColor: Record<ElementType, Color3> = {
     [ElementType.Metal]: new Color3(0.8, 0.8, 0.8) // Metal element is gray
 };
 
-export const ElementMaterial: Record<ElementType, StandardMaterial> = {
+export let ElementMaterial: Record<ElementType, StandardMaterial> = {
     [ElementType.Fire]: null,
     [ElementType.Earth]: null,
     [ElementType.Water]: null,
@@ -79,9 +82,38 @@ export const OFFSET = 1;
 
 export function getRandomEnumValue<T>(anEnum: T): T[keyof T] {
     const enumValues = Object.values(anEnum);
-    console.log(enumValues);
     const randomIndex = Math.floor(Math.random() * enumValues.length);
     return enumValues[randomIndex] as T[keyof T];
 }
 
 export const IN_GAME_SECOND: number = 1000;
+
+// Variable to store event listeners
+let eventListeners = [];
+
+export function addEventListenerCustom(type: string, listener: EventListenerOrEventListenerObject) {
+    // Add the event listener
+    document.addEventListener(type, listener);
+  
+    // Store the event listener and its type
+    eventListeners.push({ type, listener });
+  }
+  
+// Function to remove all event listeners of a certain type
+export function removeEventListenersOfType(type: string) {
+
+    // Iterate over the stored event listeners
+
+    for (let i = eventListeners.length - 1; i >= 0; i--) {
+        const { eventType, listener } = eventListeners[i];
+
+        // Check if the event listener matches the specified type
+        if (eventType === type) {
+            // Remove the event listener
+            document.removeEventListener(type, listener);
+
+            // Remove the event listener from the stored array
+            eventListeners.splice(i, 1);
+        }
+    }
+}

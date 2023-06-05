@@ -2,14 +2,13 @@ import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
 import "@babylonjs/loaders/glTF";
 import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, MeshBuilder, StandardMaterial, Matrix, GroundMesh, Ray} from "@babylonjs/core";
-import WaveSpawnerBehavior, { EnemyType, SpawnInfo } from "./Behaviors/WaveSpawnerBehavior";
+import WaveSpawnerBehavior, { SpawnInfo } from "./Behaviors/WaveSpawnerBehavior";
 import UpdateableNodeManager from "./UpdateableNodeManager";
 import { TagBehavior } from "./Behaviors/TagBehavior";
 import UpdateableNode from "./UpdateableNode";
 import TowerBehavior from "./Behaviors/TowerBehaviour";
-import { BehaviorName, objects, Tag, ElementType, getRandomEnumValue, ElementMaterial, ElementColor, KEYS, allPressedKeys, IN_GAME_SECOND} from "./Gobal";
+import { BehaviorName, objects, Tag, ElementType, ElementMaterial, ElementColor, KEYS, allPressedKeys, IN_GAME_SECOND, addEventListenerCustom, removeEventListenersOfType} from "./Gobal";
 import CollisionSystem from "./Systems/CollisionSystem";
-import { AdvancedDynamicTexture, Button, Control, Rectangle, TextBlock } from "@babylonjs/gui";
 import { Card, CardHandBehavior } from "./Behaviors/CardHandBehavior";
 import GameBehavior from "./Behaviors/GameBehavior";
 import StateMachineBehavior from "./Behaviors/StateMachineBehavior";
@@ -36,8 +35,18 @@ window.addEventListener("keydown", function (event) {
         } else {
             globalDTMultiplier = 0;
         }
+    }
 
-        // globalDTMultiplier = 0;
+    if (event.keyCode === KEYS.Plus) {
+        globalDTMultiplier *= 2;
+    }
+
+    if (event.keyCode === KEYS.Minus) {
+        globalDTMultiplier /= 2;
+    }
+
+    if (event.keyCode === KEYS.ZERO) {
+        globalDTMultiplier = 1;
     }
 
 });
@@ -81,6 +90,7 @@ class App {
             }
             ElementMaterial[ElementType[element]] = new StandardMaterial(`${element}-material`, scene);
             ElementMaterial[ElementType[element]].diffuseColor = ElementColor[ElementType[element]];
+            console.log(ElementMaterial);
         }
 
         var camera: ArcRotateCamera = new ArcRotateCamera("Camera", Math.PI / 2, Math.PI / 4, 10, Vector3.Zero(), scene);
@@ -133,15 +143,24 @@ const onPointerUp = (elementType: ElementType, eventData: PointerEvent) => {
     );
     const pickingInfo = r.intersectsMesh(ground);
     const finalPos = pickingInfo.pickedPoint;
+    if (!finalPos) {
+        return;
+    }
     finalPos.y = 1.25;
     const tower = new UpdateableNode("TowerNode", scene);
     tower.position = finalPos;
-    const tagBehavior = new TagBehavior([Tag.Tower]);
+    
+    const timerBehavior = new TimerBehavior();
     const towerBehavior = new TowerBehavior(2.5, 100, elementType);
+    const tagBehavior = new TagBehavior([Tag.Tower]);
+
+    tower.addBehavior(timerBehavior);
     tower.addBehavior(towerBehavior);
     tower.addBehavior(tagBehavior);
 
     objects.push(tower);
+
+    removeEventListenersOfType("pointerup");
 };
 
 
@@ -152,9 +171,9 @@ const fireCard = new Card(
     "Damage: 2\nHealth: 3\nAbility: None",
     "Does fire damage",
     (eventData) => {
-        canvas.addEventListener("pointermove", onPointerMove);
+        addEventListenerCustom("pointermove", onPointerMove);
         const pointerUp = onPointerUp.bind(undefined, ElementType.Fire)
-        canvas.addEventListener("pointerup", pointerUp);
+        addEventListenerCustom("pointerup", pointerUp);
     },
     canvas.width/2 - 150, // positionX
     canvas.height/2 - 150, // positionY
@@ -167,9 +186,9 @@ const waterCard = new Card(
     "Damage: 2\nHealth: 3\nAbility: None",
     "Does water damage",
     (eventData) => {
-        canvas.addEventListener("pointermove", onPointerMove);
+        addEventListenerCustom("pointermove", onPointerMove);
         const pointerUp = onPointerUp.bind(undefined, ElementType.Water)
-        canvas.addEventListener("pointerup", pointerUp);
+        addEventListenerCustom("pointerup", pointerUp);
     },
     canvas.width/2 - 400, // positionX
     canvas.height/2 - 150, // positionY
@@ -182,9 +201,9 @@ const earthCard = new Card(
     "Damage: 2\nHealth: 3\nAbility: None",
     "Does earth damage",
     (eventData) => {
-        canvas.addEventListener("pointermove", onPointerMove);
+        addEventListenerCustom("pointermove", onPointerMove);
         const pointerUp = onPointerUp.bind(undefined, ElementType.Earth)
-        canvas.addEventListener("pointerup", pointerUp);
+        addEventListenerCustom("pointerup", pointerUp);
     },
     canvas.width/2 - 650, // positionX
     canvas.height/2 - 150, // positionY
@@ -197,9 +216,9 @@ const airCard = new Card(
     "Damage: 2\nHealth: 3\nAbility: None",
     "Does air damage",
     (eventData) => {
-        canvas.addEventListener("pointermove", onPointerMove);
+        addEventListenerCustom("pointermove", onPointerMove);
         const pointerUp = onPointerUp.bind(undefined, ElementType.Air)
-        canvas.addEventListener("pointerup", pointerUp);
+        addEventListenerCustom("pointerup", pointerUp);
     },
     canvas.width/2 - 900, // positionX
     canvas.height/2 - 150, // positionY
