@@ -70,11 +70,11 @@ export class Card {
 
     public hide(): void {
         this.card.isVisible = false;
-      }
+    }
     
     public show(): void {
         this.card.isVisible = true;
-      }
+    }
   }
 
 export class CardHandBehavior extends UpdateableBehavior {

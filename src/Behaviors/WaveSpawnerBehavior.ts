@@ -54,6 +54,7 @@ export default class WaveSpawner extends UpdateableBehavior {
         this._enemyIndex = 0;
         const timerBehavior = this._node.getBehaviorByName(BehaviorName.Timer) as TimerBehavior;
         timerBehavior.start(() => this.spawnEnemy(), this.interval * IN_GAME_SECOND, TimerMode.Interval);
+        this._enemiesInWave = this.waveInfo[this.currentWave].length;
     }    
 
     public spawnEnemy() {
@@ -92,5 +93,8 @@ export default class WaveSpawner extends UpdateableBehavior {
                 timerBehavior.start(() => this.spawnWave(), delayBetweenWaves, TimerMode.Timeout);
             }
         }
+    }
+    public get enemiesInwave(): number {
+        return this._enemiesInWave;
     }
 }

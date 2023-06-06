@@ -14,6 +14,7 @@ import GameBehavior from "./Behaviors/GameBehavior";
 import StateMachineBehavior from "./Behaviors/StateMachineBehavior";
 import { generateRandomWave, generateTestingWave } from "./waveData";
 import { TimerBehavior } from "./Behaviors/TimerBehavior";
+import { UIOverlayBehavior } from "./Behaviors/UIOverlayBehavior";
 
 // create the canvas html element and attach it to the webpage
 export const canvas = document.createElement("canvas");
@@ -82,90 +83,6 @@ export function updateGameLogic() {
     scene.render();
 }
 
-class App {
-    constructor() {
-        for (const element of Object.keys(ElementType)) {
-            if (!isNaN(element as any as number)) {
-                continue;
-            }
-            ElementMaterial[ElementType[element]] = new StandardMaterial(`${element}-material`, scene);
-            ElementMaterial[ElementType[element]].diffuseColor = ElementColor[ElementType[element]];
-            console.log(ElementMaterial);
-        }
-
-        var camera: ArcRotateCamera = new ArcRotateCamera("Camera", Math.PI / 2, Math.PI / 4, 10, Vector3.Zero(), scene);
-        camera.attachControl(canvas, true);
-        camera.position.y += 500;
-        var light1: HemisphericLight = new HemisphericLight("light1", new Vector3(1, 1, 0), scene);
-
-        ground = MeshBuilder.CreateGround("ground", {width:100, height:100}, scene);
-
-        level1();
-
-        const gameSystem = new UpdateableNode("gameSystem", scene);
-
-        // hide/show the Inspector
-        window.addEventListener("keydown", (ev) => {
-            // Shift+Ctrl+Alt+I
-            if (ev.key === 'i') {
-                if (scene.debugLayer.isVisible()) {
-                    scene.debugLayer.hide();
-                } else {
-                    scene.debugLayer.show();
-                }
-            }
-        });
-
-        // run the main render loop
-        engine.runRenderLoop(updateGameLogic);
-    }
-}
-new App();
-
-function onPointerMove(eventData: PointerEvent) {
-    const mouseX = eventData.clientX;
-    const mouseY = eventData.clientY;
-
-    // Update the card position
-    // card.left = `${mouseX}px`;
-    // card.top = `${mouseY}px`;
-};
-
-const onPointerUp = (elementType: ElementType, eventData: PointerEvent) => {
-    // Get the mouse position relative to the canvas
-
-    let r: Ray = Ray.CreateNew(scene.pointerX, scene.pointerY,
-        engine.getRenderWidth(),
-        engine.getRenderHeight(),
-        Matrix.Identity(),
-        scene.getViewMatrix(),
-        scene.getProjectionMatrix()
-    );
-    const pickingInfo = r.intersectsMesh(ground);
-    const finalPos = pickingInfo.pickedPoint;
-    if (!finalPos) {
-        return;
-    }
-    finalPos.y = 1.25;
-    const tower = new UpdateableNode("TowerNode", scene);
-    tower.position = finalPos;
-    
-    const timerBehavior = new TimerBehavior();
-    const towerBehavior = new TowerBehavior(2.5, 100, elementType);
-    const tagBehavior = new TagBehavior([Tag.Tower]);
-
-    tower.addBehavior(timerBehavior);
-    tower.addBehavior(towerBehavior);
-    tower.addBehavior(tagBehavior);
-
-    objects.push(tower);
-
-    removeEventListenersOfType("pointerup");
-};
-
-
-const GameSystem = new UpdateableNode("gameSystem", scene);
-
 const fireCard = new Card(
     "Fire Tower",
     "Damage: 2\nHealth: 3\nAbility: None",
@@ -228,14 +145,98 @@ const airCard = new Card(
 
 const cards = [fireCard, waterCard, earthCard, airCard];
 
+const gameSystem = new UpdateableNode("GameSystem", scene);
+
 const stateMachineBehavior = new StateMachineBehavior();
-GameSystem.addBehavior(stateMachineBehavior);
+gameSystem.addBehavior(stateMachineBehavior);
 
 const cardHand = new CardHandBehavior(cards);
 const gameBehavior = new GameBehavior();
+const uiOverlayBehavior = new UIOverlayBehavior();
 
-GameSystem.addBehavior(cardHand);
-GameSystem.addBehavior(gameBehavior);
+gameSystem.addBehavior(cardHand);
+gameSystem.addBehavior(gameBehavior);
+gameSystem.addBehavior(uiOverlayBehavior);
+
+class App {
+    constructor() {
+        for (const element of Object.keys(ElementType)) {
+            if (!isNaN(element as any as number)) {
+                continue;
+            }
+            ElementMaterial[ElementType[element]] = new StandardMaterial(`${element}-material`, scene);
+            ElementMaterial[ElementType[element]].diffuseColor = ElementColor[ElementType[element]];
+            console.log(ElementMaterial);
+        }
+
+        var camera: ArcRotateCamera = new ArcRotateCamera("Camera", Math.PI / 2, Math.PI / 4, 10, Vector3.Zero(), scene);
+        camera.attachControl(canvas, true);
+        camera.position.y += 500;
+        var light1: HemisphericLight = new HemisphericLight("light1", new Vector3(1, 1, 0), scene);
+
+        ground = MeshBuilder.CreateGround("ground", {width:100, height:100}, scene);
+
+        // level1();
+        testingLevel();
+
+        // hide/show the Inspector
+        window.addEventListener("keydown", (ev) => {
+            // Shift+Ctrl+Alt+I
+            if (ev.key === 'i') {
+                if (scene.debugLayer.isVisible()) {
+                    scene.debugLayer.hide();
+                } else {
+                    scene.debugLayer.show();
+                }
+            }
+        });
+
+        // run the main render loop
+        engine.runRenderLoop(updateGameLogic);
+    }
+}
+new App();
+
+function onPointerMove(eventData: PointerEvent) {
+    const mouseX = eventData.clientX;
+    const mouseY = eventData.clientY;
+
+    // Update the card position
+    // card.left = `${mouseX}px`;
+    // card.top = `${mouseY}px`;
+};
+
+const onPointerUp = (elementType: ElementType, eventData: PointerEvent) => {
+    // Get the mouse position relative to the canvas
+
+    let r: Ray = Ray.CreateNew(scene.pointerX, scene.pointerY,
+        engine.getRenderWidth(),
+        engine.getRenderHeight(),
+        Matrix.Identity(),
+        scene.getViewMatrix(),
+        scene.getProjectionMatrix()
+    );
+    const pickingInfo = r.intersectsMesh(ground);
+    const finalPos = pickingInfo.pickedPoint;
+    if (!finalPos) {
+        return;
+    }
+    finalPos.y = 1.25;
+    const tower = new UpdateableNode("TowerNode", scene);
+    tower.position = finalPos;
+    
+    const timerBehavior = new TimerBehavior();
+    const towerBehavior = new TowerBehavior(2.5, 100, elementType);
+    const tagBehavior = new TagBehavior([Tag.Tower]);
+
+    tower.addBehavior(timerBehavior);
+    tower.addBehavior(towerBehavior);
+    tower.addBehavior(tagBehavior);
+
+    objects.push(tower);
+
+    removeEventListenersOfType("pointerup");
+};
 
 function level1() {
     const waves: Array<Array<SpawnInfo>> = [
@@ -253,13 +254,14 @@ function level1() {
 
     console.log(waves)
 
-    const spawner = new UpdateableNode("waveSpawner", scene);
+    const spawner = new UpdateableNode("WaveSpawner", scene);
     spawner.position.x = -20;
     const spawnerBehavior = new WaveSpawnerBehavior();
     spawnerBehavior.waveInfo = waves;
     const spawnerTimerBehavior = new TimerBehavior();
     spawner.addBehavior(spawnerTimerBehavior);
     spawner.addBehavior(spawnerBehavior);
+    spawner.parent = gameSystem;
 
     const tower = new UpdateableNode("tower1", scene);
     tower.position.y = 1.25;
@@ -322,18 +324,22 @@ function testingLevel() {
 
     console.log(waves);
 
-    const spawner = new UpdateableNode("waveSpawner", scene);
+    const spawner = new UpdateableNode("WaveSpawner", scene);
     spawner.position.x = -20;
     const spawnerBehavior = new WaveSpawnerBehavior();
     spawnerBehavior.waveInfo = waves;
+    const spawnerTimerBehavior = new TimerBehavior();
+    spawner.addBehavior(spawnerTimerBehavior);
     spawner.addBehavior(spawnerBehavior);
+    spawner.parent = gameSystem;
 
     const waterTower = new UpdateableNode("waterTower", scene);
+    waterTower.position.x = 5;
     waterTower.position.y = 1.25;
-    waterTower.position.x = 10;
-    waterTower.position.z = 10;
     const waterTowerBehavior = new TowerBehavior(2.5, 100, ElementType.Water);
     const waterTowerTagBehavior = new TagBehavior([Tag.Tower]);
+    const timerBehavior = new TimerBehavior();
+    waterTower.addBehavior(timerBehavior);
     waterTower.addBehavior(waterTowerBehavior);
     waterTower.addBehavior(waterTowerTagBehavior);
 
