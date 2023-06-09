@@ -91,12 +91,12 @@ export const IN_GAME_SECOND: number = 1000;
 // Variable to store event listeners
 let eventListeners = [];
 
-export function addEventListenerCustom(type: string, listener: EventListenerOrEventListenerObject) {
+export function addEventListenerCustom(eventType: string, listener: EventListenerOrEventListenerObject) {
     // Add the event listener
-    document.addEventListener(type, listener);
+    document.addEventListener(eventType, listener);
   
     // Store the event listener and its type
-    eventListeners.push({ type, listener });
+    eventListeners.push({ eventType, listener });
   }
   
 // Function to remove all event listeners of a certain type

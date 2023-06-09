@@ -83,14 +83,13 @@ export function updateGameLogic() {
     scene.render();
 }
 
+let elementType: ElementType | null = null;
 const fireCard = new Card(
     "Fire Tower",
     "Damage: 2\nHealth: 3\nAbility: None",
     "Does fire damage",
     (eventData) => {
-        addEventListenerCustom("pointermove", onPointerMove);
-        const pointerUp = onPointerUp.bind(undefined, ElementType.Fire)
-        addEventListenerCustom("pointerup", pointerUp);
+        elementType = ElementType.Fire;
     },
     canvas.width/2 - 150, // positionX
     canvas.height/2 - 150, // positionY
@@ -103,9 +102,7 @@ const waterCard = new Card(
     "Damage: 2\nHealth: 3\nAbility: None",
     "Does water damage",
     (eventData) => {
-        addEventListenerCustom("pointermove", onPointerMove);
-        const pointerUp = onPointerUp.bind(undefined, ElementType.Water)
-        addEventListenerCustom("pointerup", pointerUp);
+        elementType = ElementType.Water;
     },
     canvas.width/2 - 400, // positionX
     canvas.height/2 - 150, // positionY
@@ -118,9 +115,7 @@ const earthCard = new Card(
     "Damage: 2\nHealth: 3\nAbility: None",
     "Does earth damage",
     (eventData) => {
-        addEventListenerCustom("pointermove", onPointerMove);
-        const pointerUp = onPointerUp.bind(undefined, ElementType.Earth)
-        addEventListenerCustom("pointerup", pointerUp);
+        elementType = ElementType.Earth;
     },
     canvas.width/2 - 650, // positionX
     canvas.height/2 - 150, // positionY
@@ -133,9 +128,7 @@ const airCard = new Card(
     "Damage: 2\nHealth: 3\nAbility: None",
     "Does air damage",
     (eventData) => {
-        addEventListenerCustom("pointermove", onPointerMove);
-        const pointerUp = onPointerUp.bind(undefined, ElementType.Air)
-        addEventListenerCustom("pointerup", pointerUp);
+        elementType = ElementType.Air;
     },
     canvas.width/2 - 900, // positionX
     canvas.height/2 - 150, // positionY
@@ -197,18 +190,13 @@ class App {
 }
 new App();
 
-function onPointerMove(eventData: PointerEvent) {
-    const mouseX = eventData.clientX;
-    const mouseY = eventData.clientY;
+const onPointerUp = (eventData: PointerEvent) => {
+    if (elementType == null) {
+        // Nothing to do, no card has been selected
+        return;
+    }
 
-    // Update the card position
-    // card.left = `${mouseX}px`;
-    // card.top = `${mouseY}px`;
-};
-
-const onPointerUp = (elementType: ElementType, eventData: PointerEvent) => {
     // Get the mouse position relative to the canvas
-
     let r: Ray = Ray.CreateNew(scene.pointerX, scene.pointerY,
         engine.getRenderWidth(),
         engine.getRenderHeight(),
@@ -235,8 +223,11 @@ const onPointerUp = (elementType: ElementType, eventData: PointerEvent) => {
 
     objects.push(tower);
 
-    removeEventListenersOfType("pointerup");
+    elementType = null;
 };
+
+// TODO: MOVE TO A UI FILE AND IN A REASONABLE FUNCTION
+addEventListenerCustom("pointerup", onPointerUp);
 
 function level1() {
     const waves: Array<Array<SpawnInfo>> = [
