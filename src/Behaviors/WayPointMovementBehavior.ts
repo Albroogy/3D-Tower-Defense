@@ -17,7 +17,6 @@ export default class WaypointMovementBehavior extends UpdateableBehavior {
 
     public attach(target: UpdateableNode): void {
         this._node = target;
-        this._node.position = this._waypoints[0];
     }
 
     update(dt: number): void {

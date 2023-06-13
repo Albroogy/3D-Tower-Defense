@@ -1,4 +1,4 @@
-import { Mesh, MeshBuilder, Scene, StandardMaterial, TransformNode, Vector3 } from "@babylonjs/core";
+import { Mesh, MeshBuilder, Scene, StandardMaterial, TransformNode, Vector3, Vector4 } from "@babylonjs/core";
 import EnemyBehavior from "./EnemyBehavior";
 import { BehaviorName, ElementColor, ElementMaterial as ElementMaterial, ElementType, IN_GAME_SECOND, objects, OFFSET, Tag, TimerMode } from "../Global";
 import { TagBehavior } from "./TagBehavior";
@@ -17,6 +17,24 @@ export enum EnemyType {
     TorusKnot = "TorusKnot",
 }
 
+// TODO: Move to a separate file because this is just for babylon helpers
+type BabylonSphereParameters = {
+    segments?: number;
+    diameter?: number;
+    diameterX?: number;
+    diameterY?: number;
+    diameterZ?: number;
+    arc?: number;
+    slice?: number;
+    sideOrientation?: number;
+    frontUVs?: Vector4;
+    backUVs?: Vector4;
+    updatable?: boolean;
+};
+type BabylonCubeParameters = {};
+
+// TODO: Redo to be type-safe
+// type Parameters = BabylonSphereParameters | BabylonCubeParameters  | 
 type Parameters = Record<string, any>;
 
 const createEnemyMesh = {
@@ -68,7 +86,7 @@ export default class WaveSpawner extends UpdateableBehavior {
         if (this._enemyIndex < this.waveInfo[this.currentWave].length) {
             // spawn the enemy and increase the counter
             const enemyInfo = this.waveInfo[this.currentWave][this._enemyIndex];
-            let enemyContainerNode = new UpdateableNode(`enemy ${enemyInfo.parameters.element}`, this._node.getScene());
+            let enemyContainerNode = new UpdateableNode(`enemy ${ElementType[enemyInfo.element]}`, this._node.getScene());
             let mesh: Mesh;
 
             mesh = createEnemyMesh[enemyInfo.type]("enemyMesh", enemyInfo.parameters, this._node.getScene());
