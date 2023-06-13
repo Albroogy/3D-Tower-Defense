@@ -46,7 +46,7 @@ export default class TowerBehavior extends UpdateableBehavior {
         const direction = targetPosition.subtract(towerGroudPosition).normalize();
 
         let rockContainerNode = new UpdateableNode("Projectile-Container", this._node.getScene());
-        const projectileBehavior = new ProjectileBehavior(10, 10, direction, this.element);
+        const projectileBehavior = new ProjectileBehavior(100, 10, direction, this.element);
         rockContainerNode.addBehavior(projectileBehavior);
         const tagBehavior = new TagBehavior([Tag.Projectile]);
         rockContainerNode.addBehavior(tagBehavior);

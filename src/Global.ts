@@ -1,4 +1,4 @@
-import { Color3, StandardMaterial } from "@babylonjs/core";
+import { Color3, Engine, Scene, StandardMaterial } from "@babylonjs/core";
 import UpdateableNode from "./UpdateableNode";
 export const allPressedKeys: Record<string, boolean> = {};
 
@@ -24,9 +24,6 @@ export const KEYS = {
     Minus: 189,
     ZERO: 48,
 };
-
-
-
 
 export enum BehaviorName {
     Enemy = "Enemy",
@@ -120,3 +117,44 @@ export function removeEventListenersOfType(type: string) {
         }
     }
 }
+
+// create the canvas html element and attach it to the webpage
+export const canvas = document.createElement("canvas");
+canvas.style.width = "100%";
+canvas.style.height = "100%";
+canvas.id = "gameCanvas";
+document.body.appendChild(canvas);
+
+export const engine = new Engine(canvas, true);
+export const scene = new Scene(engine);
+
+// Key Information
+window.addEventListener("keydown", function (event) {
+    allPressedKeys[event.keyCode] = true;
+
+    if (event.keyCode === KEYS.P) {
+        if (globalDTMultiplier == 0) {
+            globalDTMultiplier = 1;
+        } else {
+            globalDTMultiplier = 0;
+        }
+    }
+
+    if (event.keyCode === KEYS.Plus) {
+        globalDTMultiplier *= 2;
+    }
+
+    if (event.keyCode === KEYS.Minus) {
+        globalDTMultiplier /= 2;
+    }
+
+    if (event.keyCode === KEYS.ZERO) {
+        globalDTMultiplier = 1;
+    }
+
+});
+window.addEventListener("keyup", function (event) {
+    allPressedKeys[event.keyCode] = false;
+});
+
+export let globalDTMultiplier = 1;

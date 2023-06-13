@@ -21,29 +21,31 @@ export default class WaypointMovementBehavior extends UpdateableBehavior {
     }
 
     update(dt: number): void {
+        if (this._currentWaypointIndex >= this._waypoints.length) {
+            return;
+        }
+    
         const currentWaypoint = this._waypoints[this._currentWaypointIndex];
         const direction = currentWaypoint.subtract(this._node.position).normalize();
         const distanceToWaypoint = currentWaypoint.subtract(this._node.position).length();
-
+    
         if (!currentWaypoint) {
             return;
         }
         
-        // Calculate the speed based on distance
-        // const speedFactor = Math.max(0, Math.min(1, distanceToWaypoint / 10)); // Adjust 10 as needed
-        const adjustedSpeed = this._speed;
+        const adjustedSpeed = this._speed * dt;
       
-        if (distanceToWaypoint <= adjustedSpeed * dt) {
+        if (distanceToWaypoint <= adjustedSpeed) {
             // Reached the waypoint, move to the next one
+            this._node.position.copyFrom(currentWaypoint);
             this._currentWaypointIndex++;
-        // if (this._currentWaypointIndex >= this._waypoints.length) {
-        //     // Reached the last waypoint, reset to the first one
-        //     this._currentWaypointIndex = 0;
-        // }
         } else {
             // Move towards the current waypoint with adjusted speed
-            this._node.position.addInPlace(direction.scale(adjustedSpeed * dt));
+            const movement = direction.scale(adjustedSpeed);
+            this._node.position.addInPlace(movement);
         }
-        console.log(this._node.position)
+        
+        console.log(this._currentWaypointIndex);
+        console.log(this._node.position);
     }
 }
