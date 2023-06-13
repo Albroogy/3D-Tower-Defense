@@ -1,6 +1,6 @@
 import { TransformNode, Vector3 } from "@babylonjs/core";
 import { AdvancedDynamicTexture, Button, TextBlock, Rectangle } from "@babylonjs/gui";
-import { BehaviorName, objects } from "../Gobal";
+import { BehaviorName, objects } from "../Global";
 import UpdateableBehavior from "../UpdateableBehavior";
 import UpdateableNode from "../UpdateableNode";
 

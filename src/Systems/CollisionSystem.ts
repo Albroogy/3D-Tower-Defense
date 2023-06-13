@@ -1,5 +1,5 @@
 import EnemyBehavior from "../Behaviors/EnemyBehavior";
-import { BehaviorName, objects, Tag } from "../Gobal";
+import { BehaviorName, objects, Tag } from "../Global";
 import { TagBehavior } from "../Behaviors/TagBehavior";
 import TowerBehavior from "../Behaviors/TowerBehaviour";
 import UpdateableNode from "../UpdateableNode";

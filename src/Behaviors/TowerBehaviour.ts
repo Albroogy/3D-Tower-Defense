@@ -1,5 +1,5 @@
 import { Color3, Mesh, MeshBuilder, Space, StandardMaterial, TransformNode, Vector3 } from "@babylonjs/core";
-import { BehaviorName, objects, Tag, ElementType, ElementColor, ElementMaterial as ElementMaterial, IN_GAME_SECOND, TimerMode } from "../Gobal";
+import { BehaviorName, objects, Tag, ElementType, ElementColor, ElementMaterial as ElementMaterial, IN_GAME_SECOND, TimerMode } from "../Global";
 import ProjectileBehavior from "./ProjectileBehavior";
 import { TagBehavior } from "./TagBehavior";
 import UpdateableBehavior from "../UpdateableBehavior";

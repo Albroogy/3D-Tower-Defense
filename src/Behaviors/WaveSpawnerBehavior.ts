@@ -1,11 +1,12 @@
 import { Mesh, MeshBuilder, Scene, StandardMaterial, TransformNode, Vector3 } from "@babylonjs/core";
 import EnemyBehavior from "./EnemyBehavior";
-import { BehaviorName, ElementColor, ElementMaterial as ElementMaterial, ElementType, IN_GAME_SECOND, objects, OFFSET, Tag, TimerMode } from "../Gobal";
+import { BehaviorName, ElementColor, ElementMaterial as ElementMaterial, ElementType, IN_GAME_SECOND, objects, OFFSET, Tag, TimerMode } from "../Global";
 import { TagBehavior } from "./TagBehavior";
 import UpdateableBehavior from "../UpdateableBehavior";
 import UpdateableNode from "../UpdateableNode";
 import HealthBarBehavior, { HealthBar } from "./HealthBarBehavior";
 import { TimerBehavior } from "./TimerBehavior";
+import WaypointMovementBehavior from "./WayPointMovementBehavior";
 
 
 export enum EnemyType {
@@ -36,14 +37,20 @@ export type SpawnInfo = {
 export default class WaveSpawner extends UpdateableBehavior {
     public name = BehaviorName.WaveSpawner;
 
-    private _enemiesCount: number = 0; // keep track of the number of enemies
     private _enemiesInWave: number = 0; // keep track of the number of enemies
 
-    public interval: number = 1;
+    public interval: number;
     public waveInfo: Array<Array<SpawnInfo>>;
+    private _waypoints: Vector3[];
     
     public currentWave: number = 0;
     private _enemyIndex: number;
+
+    constructor(waypoints: Vector3[], interval: number = 1) {
+        super();
+        this._waypoints = waypoints;
+        this.interval = interval;
+    }
 
     public attach(node: UpdateableNode): void {
         this._node = node;
@@ -75,12 +82,14 @@ export default class WaveSpawner extends UpdateableBehavior {
             enemyContainerNode.setPositionWithLocalVector(Vector3.Zero());
             const enemyBehavior = new EnemyBehavior(3, enemyInfo.element, enemyInfo.health);
             const tagBehavior = new TagBehavior([Tag.Enemy]);
+            const waypointMovementBehavior = new WaypointMovementBehavior(this._waypoints, 10);
             
             const healthBar = new HealthBar(enemyInfo.health, "red", 100, 10, true);
             const healthBarBehavior = new HealthBarBehavior([healthBar]);
             enemyContainerNode.addBehavior(enemyBehavior);
             enemyContainerNode.addBehavior(tagBehavior);
             enemyContainerNode.addBehavior(healthBarBehavior);
+            enemyContainerNode.addBehavior(waypointMovementBehavior);
             objects.push(enemyContainerNode);
             this._enemyIndex++;
         } else {

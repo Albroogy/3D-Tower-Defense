@@ -1,4 +1,4 @@
-import { ElementType } from "../Gobal";
+import { ElementType } from "../Global";
 
 export default class CollisionSystem {
     public static calculateDamage(damage: number, Element1: ElementType, Element2: ElementType): number {

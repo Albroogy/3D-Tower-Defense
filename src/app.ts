@@ -7,7 +7,7 @@ import UpdateableNodeManager from "./UpdateableNodeManager";
 import { TagBehavior } from "./Behaviors/TagBehavior";
 import UpdateableNode from "./UpdateableNode";
 import TowerBehavior from "./Behaviors/TowerBehaviour";
-import { BehaviorName, objects, Tag, ElementType, ElementMaterial, ElementColor, KEYS, allPressedKeys, IN_GAME_SECOND, addEventListenerCustom, removeEventListenersOfType} from "./Gobal";
+import { BehaviorName, objects, Tag, ElementType, ElementMaterial, ElementColor, KEYS, allPressedKeys, IN_GAME_SECOND, addEventListenerCustom, removeEventListenersOfType} from "./Global";
 import CollisionSystem from "./Systems/CollisionSystem";
 import { Card, CardHandBehavior } from "./Behaviors/CardHandBehavior";
 import GameBehavior from "./Behaviors/GameBehavior";
@@ -226,6 +226,8 @@ const onPointerUp = (eventData: PointerEvent) => {
     elementType = null;
 };
 
+const wayPoints = [new Vector3(15, 0, 0), new Vector3(15, 0, 5), new Vector3(10, 0, 10)]
+
 // TODO: MOVE TO A UI FILE AND IN A REASONABLE FUNCTION
 addEventListenerCustom("pointerup", onPointerUp);
 
@@ -247,7 +249,7 @@ function level1() {
 
     const spawner = new UpdateableNode("WaveSpawner", scene);
     spawner.position.x = -20;
-    const spawnerBehavior = new WaveSpawnerBehavior();
+    const spawnerBehavior = new WaveSpawnerBehavior([new Vector3(15, 0, 0), new Vector3(15, 0, 5), new Vector3(10, 0, 10), new Vector3(5, 0, 10), new Vector3(0, 0, 10), new Vector3(0, 0, 0)]);
     spawnerBehavior.waveInfo = waves;
     const spawnerTimerBehavior = new TimerBehavior();
     spawner.addBehavior(spawnerTimerBehavior);
@@ -317,7 +319,7 @@ function testingLevel() {
 
     const spawner = new UpdateableNode("WaveSpawner", scene);
     spawner.position.x = -20;
-    const spawnerBehavior = new WaveSpawnerBehavior();
+    const spawnerBehavior = new WaveSpawnerBehavior([new Vector3(-15, 0, 0), new Vector3(-15, 0, 5), new Vector3(-10, 0, 10), new Vector3(-5, 0, 10), new Vector3(0, 0, 10), new Vector3(10, 0, 0)]);
     spawnerBehavior.waveInfo = waves;
     const spawnerTimerBehavior = new TimerBehavior();
     spawner.addBehavior(spawnerTimerBehavior);

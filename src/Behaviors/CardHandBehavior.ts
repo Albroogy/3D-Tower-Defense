@@ -1,5 +1,5 @@
 import { AdvancedDynamicTexture, Button, Control, Rectangle, TextBlock } from "@babylonjs/gui";
-import { BehaviorName } from "../Gobal";
+import { BehaviorName } from "../Global";
 import UpdateableBehavior from "../UpdateableBehavior";
 
 export class Card {

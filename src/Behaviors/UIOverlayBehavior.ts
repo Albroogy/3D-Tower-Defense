@@ -1,5 +1,5 @@
 import { AdvancedDynamicTexture, TextBlock } from "@babylonjs/gui";
-import { BehaviorName, objects, Tag } from "../Gobal";
+import { BehaviorName, objects, Tag } from "../Global";
 import UpdateableBehavior from "../UpdateableBehavior";
 import UpdateableNode from "../UpdateableNode";
 import { TagBehavior } from "./TagBehavior";

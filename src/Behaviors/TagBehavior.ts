@@ -1,4 +1,4 @@
-import { BehaviorName, Tag } from "../Gobal";
+import { BehaviorName, Tag } from "../Global";
 import UpdateableBehavior from "../UpdateableBehavior";
 
 export class TagBehavior extends UpdateableBehavior {

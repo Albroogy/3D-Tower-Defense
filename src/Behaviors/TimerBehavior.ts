@@ -1,4 +1,4 @@
-import { BehaviorName, IN_GAME_SECOND, TimerMode } from "../Gobal";
+import { BehaviorName, IN_GAME_SECOND, TimerMode } from "../Global";
 import UpdateableBehavior from "../UpdateableBehavior";
 
 export class TimerBehavior extends UpdateableBehavior {

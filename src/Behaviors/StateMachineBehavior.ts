@@ -1,4 +1,4 @@
-import { BehaviorName } from "../Gobal";
+import { BehaviorName } from "../Global";
 import UpdateableBehavior from "../UpdateableBehavior";
 import UpdateableNode from "../UpdateableNode";
 

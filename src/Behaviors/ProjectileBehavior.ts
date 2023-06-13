@@ -1,5 +1,5 @@
 import { Mesh, TransformNode, Vector3 } from "@babylonjs/core";
-import { BehaviorName, ElementType } from "../Gobal";
+import { BehaviorName, ElementType } from "../Global";
 import UpdateableBehavior from "../UpdateableBehavior";
 import UpdateableNode from "../UpdateableNode";
 

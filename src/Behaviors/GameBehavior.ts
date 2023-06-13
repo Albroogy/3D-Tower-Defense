@@ -1,4 +1,4 @@
-import { allPressedKeys, BehaviorName, KEYS } from "../Gobal";
+import { allPressedKeys, BehaviorName, KEYS } from "../Global";
 import UpdateableBehavior from "../UpdateableBehavior";
 import UpdateableNode from "../UpdateableNode";
 import { CardHandBehavior } from "./CardHandBehavior";
