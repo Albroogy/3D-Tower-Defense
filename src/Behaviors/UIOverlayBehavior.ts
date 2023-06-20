@@ -1,5 +1,5 @@
 import { AdvancedDynamicTexture, TextBlock } from "@babylonjs/gui";
-import { BehaviorName, objects, Tag } from "../Global";
+import { BehaviorName, gold, objects, Tag } from "../Global";
 import UpdateableBehavior from "../UpdateableBehavior";
 import UpdateableNode from "../UpdateableNode";
 import { TagBehavior } from "./TagBehavior";
@@ -11,6 +11,7 @@ export class UIOverlayBehavior extends UpdateableBehavior {
     private _guiTexture: AdvancedDynamicTexture;
     private _enemyCountText: TextBlock;
     private _enemiesInWaveText: TextBlock;
+    private _goldText: TextBlock;
 
     constructor() {
         super();
@@ -28,7 +29,6 @@ export class UIOverlayBehavior extends UpdateableBehavior {
         this._enemyCountText.left = -screenWidth/2 + enemyCountTextPaddingX;
         this._enemyCountText.top = -screenHeight/2 + enemyCountTextPaddingY;
         this._guiTexture.addControl(this._enemyCountText);
-        // this._enemyCountText.isVisible = false;
 
         this._enemiesInWaveText = new TextBlock("enemiesInWaveText", "Enemies in the Wave: 0");
         this._enemiesInWaveText.color = "white";
@@ -38,7 +38,15 @@ export class UIOverlayBehavior extends UpdateableBehavior {
         this._enemiesInWaveText.left = -screenWidth/2 + enemiesInWaveTextPaddingX;
         this._enemiesInWaveText.top = -screenHeight/2 + enemiesInWaveTextPaddingY;
         this._guiTexture.addControl(this._enemiesInWaveText);
-        // this._enemiesInWaveText.isVisible = false;
+
+        this._goldText = new TextBlock("gold", "Gold: 0");
+        this._goldText.color = "white";
+        this._goldText.fontSize = 24;
+        const goldTextPaddingX = 80;
+        const goldTextPaddingY = 140;
+        this._goldText.left = -screenWidth/2 + goldTextPaddingX;
+        this._goldText.top = -screenHeight/2 + goldTextPaddingY;
+        this._guiTexture.addControl(this._goldText);
     }
 
     public attach(target: UpdateableNode): void {
@@ -66,6 +74,7 @@ export class UIOverlayBehavior extends UpdateableBehavior {
 
         this._enemyCountText.text = `Enemies: ${enemyCount}`;
         this._enemiesInWaveText.text = `Enemies in the next Wave: ${enemiesInWave}`;
+        this._goldText.text = `Gold: ${gold}`;
     }
     public hide(): void {
         this._enemyCountText.isVisible = false;

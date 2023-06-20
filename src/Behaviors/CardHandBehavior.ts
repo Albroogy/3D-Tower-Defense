@@ -78,31 +78,31 @@ export class Card {
     }
 
 export class CardHandBehavior extends UpdateableBehavior {
-        public name = BehaviorName.CardHand;
-        
-        private _cards: Card[];
+    public name = BehaviorName.CardHand;
+    
+    private _cards: Card[];
 
-        constructor(cards: Card[] = []) {
-            super();
-            this._cards = cards;
+    constructor(cards: Card[] = []) {
+        super();
+        this._cards = cards;
+    }
+
+    public addCard(card: Card): void {
+        this._cards.push(card);
+    }
+
+    public removeCard(card: Card): void {
+        const index = this._cards.indexOf(card);
+        if (index > -1) {
+            this._cards.splice(index, 1);
         }
-    
-        public addCard(card: Card): void {
-            this._cards.push(card);
-        }
-    
-        public removeCard(card: Card): void {
-            const index = this._cards.indexOf(card);
-            if (index > -1) {
-                this._cards.splice(index, 1);
-            }
-        }
-    
-        public hideAllCards(): void {
-            this._cards.forEach((card) => card.hide());
-        }
-    
-        public showAllCards(): void {
-            this._cards.forEach((card) => card.show());
-        }
+    }
+
+    public hideAllCards(): void {
+        this._cards.forEach((card) => card.hide());
+    }
+
+    public showAllCards(): void {
+        this._cards.forEach((card) => card.show());
+    }
 }

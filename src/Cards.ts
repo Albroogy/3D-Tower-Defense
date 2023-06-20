@@ -4,7 +4,7 @@ import { Card } from "./Behaviors/CardHandBehavior";
 import { TagBehavior } from "./Behaviors/TagBehavior";
 import { TimerBehavior } from "./Behaviors/TimerBehavior";
 import TowerBehavior from "./Behaviors/TowerBehaviour";
-import { addEventListenerCustom, canvas, ElementType, engine, objects, scene, Tag } from "./Global";
+import { addEventListenerCustom, canvas, ElementType, engine, gold, objects, scene, subtractGold, Tag } from "./Global";
 import UpdateableNode from "./UpdateableNode";
 
 let elementType: ElementType | null = null;
@@ -13,7 +13,11 @@ const fireCard = new Card(
     "Damage: 2\nHealth: 3\nAbility: None",
     "Does fire damage",
     (eventData) => {
-        elementType = ElementType.Fire;
+        const cost = 5
+        if (gold >= cost) {
+            elementType = ElementType.Fire;
+            subtractGold(cost);
+        }
     },
     canvas.width/2 - 150, // positionX
     canvas.height/2 - 150, // positionY
@@ -26,7 +30,11 @@ const waterCard = new Card(
     "Damage: 2\nHealth: 3\nAbility: None",
     "Does water damage",
     (eventData) => {
-        elementType = ElementType.Water;
+        const cost = 5
+        if (gold >= cost) {
+            elementType = ElementType.Water;
+            subtractGold(cost);
+        }
     },
     canvas.width/2 - 400, // positionX
     canvas.height/2 - 150, // positionY
@@ -39,7 +47,11 @@ const earthCard = new Card(
     "Damage: 2\nHealth: 3\nAbility: None",
     "Does earth damage",
     (eventData) => {
-        elementType = ElementType.Earth;
+        const cost = 5
+        if (gold >= cost) {
+            elementType = ElementType.Earth;
+            subtractGold(cost);
+        }
     },
     canvas.width/2 - 650, // positionX
     canvas.height/2 - 150, // positionY
@@ -52,7 +64,11 @@ const airCard = new Card(
     "Damage: 2\nHealth: 3\nAbility: None",
     "Does air damage",
     (eventData) => {
-        elementType = ElementType.Air;
+        const cost = 5
+        if (gold >= cost) {
+            elementType = ElementType.Air;
+            subtractGold(cost);
+        }
     },
     canvas.width/2 - 900, // positionX
     canvas.height/2 - 150, // positionY
@@ -99,5 +115,4 @@ const onPointerUp = (eventData: PointerEvent) => {
     elementType = null;
 };
 
-// TODO: MOVE TO A UI FILE AND IN A REASONABLE FUNCTION
 addEventListenerCustom("pointerup", onPointerUp);

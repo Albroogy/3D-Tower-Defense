@@ -158,3 +158,12 @@ window.addEventListener("keyup", function (event) {
 });
 
 export let globalDTMultiplier = 1;
+export let gold = 0;
+
+export function addGold(amount: number) {
+    gold += amount;
+}
+
+export function subtractGold(amount: number) {
+    gold -= amount;
+}

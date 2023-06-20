@@ -1,6 +1,6 @@
 import { TransformNode, Vector3 } from "@babylonjs/core";
 import { AdvancedDynamicTexture, Button, TextBlock, Rectangle } from "@babylonjs/gui";
-import { BehaviorName, objects } from "../Global";
+import { addGold, BehaviorName, objects } from "../Global";
 import UpdateableBehavior from "../UpdateableBehavior";
 import UpdateableNode from "../UpdateableNode";
 
@@ -66,6 +66,7 @@ export class HealthBar {
             this._node.dispose();
             this._guiTexture.removeControl(this._healthBarBackground);
             this._guiTexture.removeControl(this._healthBar);
+            addGold(1);
         }
     }
 }

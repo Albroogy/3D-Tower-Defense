@@ -1,5 +1,5 @@
 import EnemyBehavior from "../Behaviors/EnemyBehavior";
-import { BehaviorName, objects, Tag } from "../Global";
+import { addGold, BehaviorName, objects, Tag } from "../Global";
 import { TagBehavior } from "../Behaviors/TagBehavior";
 import TowerBehavior from "../Behaviors/TowerBehaviour";
 import UpdateableNode from "../UpdateableNode";
@@ -65,5 +65,4 @@ function projectileEnemyCollision(projectile: UpdateableNode, enemy: UpdateableN
     const projectileBehavior = projectile.getBehaviorByName(BehaviorName.Projectile) as ProjectileBehavior;
     healthBarBehavior.reduceHealth(ElementalSystem.calculateDamage(1, projectileBehavior.element, enemyBehavior.element), BarType.Health);
     projectile.dispose();
-    // objects.splice(objects.indexOf(enemy), 1);
 }
