@@ -1,7 +1,8 @@
 import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
 import "@babylonjs/loaders/glTF";
-import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, MeshBuilder, StandardMaterial, Matrix, GroundMesh, Ray} from "@babylonjs/core";
+import { Animation } from "@babylonjs/core/Animations";
+import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, MeshBuilder, StandardMaterial, Matrix, GroundMesh, Ray, SceneLoader, AbstractMesh} from "@babylonjs/core";
 import WaveSpawnerBehavior, { SpawnInfo } from "./Behaviors/WaveSpawnerBehavior";
 import UpdateableNodeManager from "./UpdateableNodeManager";
 import { TagBehavior } from "./Behaviors/TagBehavior";
@@ -36,6 +37,8 @@ gameSystem.addBehavior(cardHand);
 gameSystem.addBehavior(gameBehavior);
 gameSystem.addBehavior(uiOverlayBehavior);
 
+let skeletalMesh: AbstractMesh | null = null;
+
 class App {
     constructor() {
         for (const element of Object.keys(ElementType)) {
@@ -53,6 +56,18 @@ class App {
         var light1: HemisphericLight = new HemisphericLight("light1", new Vector3(1, 1, 0), scene);
 
         ground = MeshBuilder.CreateGround("ground", {width:100, height:100}, scene);
+
+        Animation.AllowMatricesInterpolation = true;
+        SceneLoader.ImportMesh("", "./assets/meshes/", "dummy3.babylon", scene, function (newMeshes, particleSystems, skeletons) {
+            skeletalMesh = newMeshes[0];
+            const skeleton = skeletons[0];
+            
+            const walkRange = skeleton.getAnimationRange("YBot_Walk");
+            
+            const walkAnim = scene.beginWeightedAnimation(skeleton, walkRange.from, walkRange.to, 1, true);
+            walkAnim.syncWith(null);
+            console.log(walkRange, walkAnim);
+        });
 
         // level1();
         testingLevel();
@@ -97,5 +112,11 @@ export function updateGameLogic() {
             CollisionSystem.checkObjectsColliding(tower, enemy);
           });
     });
+    
+
+    if (skeletalMesh != null) {
+        skeletalMesh.position.addInPlace(skeletalMesh.forward.scale(1 * dt));
+        skeletalMesh.rotate(Vector3.Up(), 5 * dt);
+    }
     scene.render();
 }

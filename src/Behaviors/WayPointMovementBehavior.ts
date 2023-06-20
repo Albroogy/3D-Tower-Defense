@@ -44,7 +44,7 @@ export default class WaypointMovementBehavior extends UpdateableBehavior {
             this._node.position.addInPlace(movement);
         }
         
-        console.log(this._currentWaypointIndex);
-        console.log(this._node.position);
+        //console.log(this._currentWaypointIndex);
+        //console.log(this._node.position);
     }
 }
