@@ -1,4 +1,4 @@
-import { AdvancedDynamicTexture, TextBlock } from "@babylonjs/gui";
+import { AdvancedDynamicTexture, TextBlock, Control } from "@babylonjs/gui";
 import { BehaviorName, gold, objects, Tag } from "../Global";
 import UpdateableBehavior from "../UpdateableBehavior";
 import UpdateableNode from "../UpdateableNode";
@@ -21,31 +21,34 @@ export class UIOverlayBehavior extends UpdateableBehavior {
 
         const screenHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
 
+        const sharedStyleSettings: Record<string, any> = {
+            color: "white",
+            fontSize: 24,
+            textHorizontalAlignment: Control.HORIZONTAL_ALIGNMENT_LEFT,
+            textVerticalAlignment: Control.VERTICAL_ALIGNMENT_TOP,
+            left: 0,
+            enemyCountTextPaddingX: 0,
+            enemyCountTextPaddingY: 0
+        };
+        const applyStyle = (control: Control, settings: Record<string, any>) => {
+            for (let settingName in settings) {
+                control[settingName] = settings[settingName];
+            }
+        };
+
         this._enemyCountText = new TextBlock("enemyCountText", "Enemies: 0");
-        this._enemyCountText.color = "white";
-        this._enemyCountText.fontSize = 24;
-        const enemyCountTextPaddingX = 100;
-        const enemyCountTextPaddingY = 60;
-        this._enemyCountText.left = -screenWidth/2 + enemyCountTextPaddingX;
-        this._enemyCountText.top = -screenHeight/2 + enemyCountTextPaddingY;
+        applyStyle(this._enemyCountText, sharedStyleSettings);
+        this._enemyCountText.top = 0;
         this._guiTexture.addControl(this._enemyCountText);
 
         this._enemiesInWaveText = new TextBlock("enemiesInWaveText", "Enemies in the Wave: 0");
-        this._enemiesInWaveText.color = "white";
-        this._enemiesInWaveText.fontSize = 24;
-        const enemiesInWaveTextPaddingX = 190;
-        const enemiesInWaveTextPaddingY = 100;
-        this._enemiesInWaveText.left = -screenWidth/2 + enemiesInWaveTextPaddingX;
-        this._enemiesInWaveText.top = -screenHeight/2 + enemiesInWaveTextPaddingY;
+        applyStyle(this._enemiesInWaveText, sharedStyleSettings);
+        this._enemiesInWaveText.top = 30;
         this._guiTexture.addControl(this._enemiesInWaveText);
 
         this._goldText = new TextBlock("gold", "Gold: 0");
-        this._goldText.color = "white";
-        this._goldText.fontSize = 24;
-        const goldTextPaddingX = 80;
-        const goldTextPaddingY = 140;
-        this._goldText.left = -screenWidth/2 + goldTextPaddingX;
-        this._goldText.top = -screenHeight/2 + goldTextPaddingY;
+        applyStyle(this._goldText, sharedStyleSettings);
+        this._goldText.top = 60;
         this._guiTexture.addControl(this._goldText);
     }
 

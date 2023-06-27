@@ -1,4 +1,4 @@
-import { Mesh, TransformNode, Vector3 } from "@babylonjs/core";
+import { Curve3, Mesh, Quaternion, TransformNode, Vector3 } from "@babylonjs/core";
 import { BehaviorName, ElementType } from "../Global";
 import UpdateableBehavior from "../UpdateableBehavior";
 import UpdateableNode from "../UpdateableNode";
@@ -11,7 +11,8 @@ export default class WaypointMovementBehavior extends UpdateableBehavior {
 
     constructor(waypoints: Vector3[], speed: number) {
         super();
-        this._waypoints = waypoints;
+        const curve = Curve3.CreateCatmullRomSpline(waypoints, 4, false);
+        this._waypoints = curve.getPoints();
         this._speed = speed;
     }
 
@@ -40,8 +41,8 @@ export default class WaypointMovementBehavior extends UpdateableBehavior {
             this._currentWaypointIndex++;
         } else {
             // Move towards the current waypoint with adjusted speed
-            const movement = direction.scale(adjustedSpeed);
-            this._node.position.addInPlace(movement);
+            this._node.lookAt(this._node.position.add(direction));
+            this._node.position.addInPlace(this._node.forward.scale(adjustedSpeed));
         }
     }
 }

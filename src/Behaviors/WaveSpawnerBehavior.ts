@@ -88,14 +88,8 @@ export default class WaveSpawner extends UpdateableBehavior {
             // spawn the enemy and increase the counter
             const enemyInfo = this.waveInfo[this.currentWave][this._enemyIndex];
             let enemyContainerNode = new UpdateableNode(`enemy ${ElementType[enemyInfo.element]}`, this._node.getScene());
-            let mesh: Mesh;
+            const materialToUse = ElementMaterial[ElementType[enemyInfo.element]];
 
-            mesh = createEnemyMesh[enemyInfo.type]("enemyMesh", enemyInfo.parameters, this._node.getScene());
-
-            mesh.material = ElementMaterial[ElementType[enemyInfo.element]];
-
-            mesh.setParent(enemyContainerNode);
-            mesh.setPositionWithLocalVector(Vector3.Zero());
             enemyContainerNode.setParent(this._node);
             
             // Setting the parent resets the position of the child to the transwformed position
@@ -105,7 +99,7 @@ export default class WaveSpawner extends UpdateableBehavior {
             const waypointMovementBehavior = new WaypointMovementBehavior(this._waypoints, 10);      
             const healthBar = new HealthBar(enemyInfo.health, "red", 100, 10, true);
             const healthBarBehavior = new HealthBarBehavior([healthBar]);
-            const skeletonBehavior = new SkeletonBehavior(scene)
+            const skeletonBehavior = new SkeletonBehavior(`SkeletalMesh ${ElementType[enemyInfo.element]}`, materialToUse)
 
             enemyContainerNode.addBehavior(enemyBehavior);
             enemyContainerNode.addBehavior(tagBehavior);
