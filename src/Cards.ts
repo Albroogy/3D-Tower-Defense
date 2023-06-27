@@ -1,5 +1,6 @@
 import { Matrix, Ray } from "@babylonjs/core";
 import { ground } from "./app";
+import { ButtonBehavior } from "./Behaviors/ButtonBehavior";
 import { Card } from "./Behaviors/CardHandBehavior";
 import { TagBehavior } from "./Behaviors/TagBehavior";
 import { TimerBehavior } from "./Behaviors/TimerBehavior";
@@ -105,14 +106,20 @@ const onPointerUp = (eventData: PointerEvent) => {
     const timerBehavior = new TimerBehavior();
     const towerBehavior = new TowerBehavior(2.5, 100, elementType);
     const tagBehavior = new TagBehavior([Tag.Tower]);
+    const buttonBehavior = new ButtonBehavior(100, 100, gold10);
 
     tower.addBehavior(timerBehavior);
     tower.addBehavior(towerBehavior);
     tower.addBehavior(tagBehavior);
+    tower.addBehavior(buttonBehavior);
 
     objects.push(tower);
 
     elementType = null;
 };
+
+function gold10() {
+    subtractGold(10);
+}
 
 addEventListenerCustom("pointerup", onPointerUp);

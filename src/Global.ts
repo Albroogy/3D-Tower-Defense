@@ -25,6 +25,7 @@ export const KEYS = {
     ZERO: 48,
 };
 
+
 export enum BehaviorName {
     Enemy = "Enemy",
     Projectile = "Projectile",
@@ -36,7 +37,8 @@ export enum BehaviorName {
     StateMachine = "StateMachine",
     CardHand = "CardHand",
     UIOverlay = "UIOverlay",
-    WaypointMovement = "WaypointMovement"
+    WaypointMovement = "WaypointMovement",
+    Skeleton = "Skeleton"
 }
 
 export enum Tag {

@@ -15,6 +15,9 @@ export default class ProjectileBehavior extends UpdateableBehavior{
     }
 
     update(dt: number): void {
+        if (this._node == null) {
+            return;
+        }
         this._node.position.x += this._direction.x * this._speed * dt;
         this._node.position.z += this._direction.z * this._speed * dt;
     }

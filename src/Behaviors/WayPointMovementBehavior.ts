@@ -20,7 +20,7 @@ export default class WaypointMovementBehavior extends UpdateableBehavior {
     }
 
     update(dt: number): void {
-        if (this._currentWaypointIndex >= this._waypoints.length) {
+        if (this._currentWaypointIndex >= this._waypoints.length || this._node == null) {
             return;
         }
     
@@ -43,8 +43,5 @@ export default class WaypointMovementBehavior extends UpdateableBehavior {
             const movement = direction.scale(adjustedSpeed);
             this._node.position.addInPlace(movement);
         }
-        
-        //console.log(this._currentWaypointIndex);
-        //console.log(this._node.position);
     }
 }

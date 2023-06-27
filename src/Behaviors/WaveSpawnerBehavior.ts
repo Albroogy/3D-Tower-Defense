@@ -1,12 +1,13 @@
 import { Mesh, MeshBuilder, Scene, StandardMaterial, TransformNode, Vector3, Vector4 } from "@babylonjs/core";
 import EnemyBehavior from "./EnemyBehavior";
-import { BehaviorName, ElementColor, ElementMaterial as ElementMaterial, ElementType, IN_GAME_SECOND, objects, OFFSET, Tag, TimerMode } from "../Global";
+import { BehaviorName, ElementColor, ElementMaterial as ElementMaterial, ElementType, IN_GAME_SECOND, objects, OFFSET, scene, Tag, TimerMode } from "../Global";
 import { TagBehavior } from "./TagBehavior";
 import UpdateableBehavior from "../UpdateableBehavior";
 import UpdateableNode from "../UpdateableNode";
 import HealthBarBehavior, { HealthBar } from "./HealthBarBehavior";
 import { TimerBehavior } from "./TimerBehavior";
 import WaypointMovementBehavior from "./WayPointMovementBehavior";
+import { SkeletonBehavior } from "./SkeletonBehavior";
 
 
 export enum EnemyType {
@@ -96,18 +97,22 @@ export default class WaveSpawner extends UpdateableBehavior {
             mesh.setParent(enemyContainerNode);
             mesh.setPositionWithLocalVector(Vector3.Zero());
             enemyContainerNode.setParent(this._node);
+            
             // Setting the parent resets the position of the child to the transwformed position
             enemyContainerNode.setPositionWithLocalVector(Vector3.Zero());
             const enemyBehavior = new EnemyBehavior(3, enemyInfo.element, enemyInfo.health);
             const tagBehavior = new TagBehavior([Tag.Enemy]);
-            const waypointMovementBehavior = new WaypointMovementBehavior(this._waypoints, 10);
-            
+            const waypointMovementBehavior = new WaypointMovementBehavior(this._waypoints, 10);      
             const healthBar = new HealthBar(enemyInfo.health, "red", 100, 10, true);
             const healthBarBehavior = new HealthBarBehavior([healthBar]);
+            const skeletonBehavior = new SkeletonBehavior(scene)
+
             enemyContainerNode.addBehavior(enemyBehavior);
             enemyContainerNode.addBehavior(tagBehavior);
             enemyContainerNode.addBehavior(healthBarBehavior);
             enemyContainerNode.addBehavior(waypointMovementBehavior);
+            enemyContainerNode.addBehavior(skeletonBehavior);
+
             objects.push(enemyContainerNode);
             this._enemyIndex++;
         } else {
