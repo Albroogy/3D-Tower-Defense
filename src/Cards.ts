@@ -80,7 +80,14 @@ const airCard = new Card(
 export const cards = [fireCard, waterCard, earthCard, airCard];
 
 
-const onPointerUp = (eventData: PointerEvent) => {
+/**
+ * This function is triggered on pointer up event. It determines if a card has been selected, 
+ * if yes it creates a tower of the selected element type at the point where the pointer was lifted.
+ * If no card was selected, it does nothing.
+ * 
+ * @param {PointerEvent} eventData - The event data from the pointer up event.
+ */
+ const onPointerUp = (eventData: PointerEvent) => {
     if (elementType == null) {
         // Nothing to do, no card has been selected
         return;

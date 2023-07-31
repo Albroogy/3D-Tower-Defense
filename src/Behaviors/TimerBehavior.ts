@@ -30,11 +30,6 @@ export class TimerBehavior extends UpdateableBehavior {
     public update(deltaTime: number): void {
         for (const timer of this._timers) {
             timer.elapsedTime += deltaTime * IN_GAME_SECOND;
-
-            // if (timer.mode === TimerMode.Timeout) {
-            //     console.log(`Elapsed time: ${timer.elapsedTime}`, `Target time: ${timer.targetTime}`)
-            // }
-
             if (timer.elapsedTime >= timer.targetTime) {
                 timer.callback();
                 timer.elapsedTime = 0;

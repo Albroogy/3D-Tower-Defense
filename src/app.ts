@@ -2,19 +2,15 @@ import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
 import "@babylonjs/loaders/glTF";
 import { Animation } from "@babylonjs/core/Animations";
-import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, MeshBuilder, StandardMaterial, Matrix, GroundMesh, Ray, SceneLoader, AbstractMesh} from "@babylonjs/core";
-import WaveSpawnerBehavior, { SpawnInfo } from "./Behaviors/WaveSpawnerBehavior";
+import { ArcRotateCamera, Vector3, HemisphericLight, MeshBuilder, StandardMaterial, Matrix, GroundMesh, Ray, SceneLoader, AbstractMesh} from "@babylonjs/core";
 import UpdateableNodeManager from "./UpdateableNodeManager";
 import { TagBehavior } from "./Behaviors/TagBehavior";
 import UpdateableNode from "./UpdateableNode";
-import TowerBehavior from "./Behaviors/TowerBehaviour";
 import { BehaviorName, objects, Tag, ElementType, ElementMaterial, ElementColor, KEYS, allPressedKeys, IN_GAME_SECOND, addEventListenerCustom, removeEventListenersOfType, globalDTMultiplier, engine, scene, canvas} from "./Global";
 import CollisionSystem from "./Systems/CollisionSystem";
-import { Card, CardHandBehavior } from "./Behaviors/CardHandBehavior";
+import { CardHandBehavior } from "./Behaviors/CardHandBehavior";
 import GameBehavior from "./Behaviors/GameBehavior";
 import StateMachineBehavior from "./Behaviors/StateMachineBehavior";
-import { generateRandomWave, generateTestingWave } from "./waveData";
-import { TimerBehavior } from "./Behaviors/TimerBehavior";
 import { UIOverlayBehavior } from "./Behaviors/UIOverlayBehavior";
 import { testingLevel } from "./Levels";
 import { cards } from "./Cards";
@@ -52,8 +48,9 @@ class App {
 
         var camera: ArcRotateCamera = new ArcRotateCamera("Camera", Math.PI / 2, Math.PI / 4, 10, Vector3.Zero(), scene);
         camera.attachControl(canvas, true);
-        camera.position.y += 500;
-        var light1: HemisphericLight = new HemisphericLight("light1", new Vector3(1, 1, 0), scene);
+        const CAMERA_HEIGHT_OFFSET = 500;
+        camera.position.y += CAMERA_HEIGHT_OFFSET;
+        var lightSource: HemisphericLight = new HemisphericLight("light1", new Vector3(1, 1, 0), scene);
 
         ground = MeshBuilder.CreateGround("ground", {width:100, height:100}, scene);
 
@@ -114,7 +111,7 @@ export function updateGameLogic() {
     });
     
 
-    if (skeletalMesh != null) {
+    if (skeletalMesh) {
         skeletalMesh.position.addInPlace(skeletalMesh.forward.scale(1 * dt));
         skeletalMesh.rotate(Vector3.Up(), 5 * dt);
     }

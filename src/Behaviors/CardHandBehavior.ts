@@ -6,6 +6,17 @@ export class Card {
     private _guiTexture: AdvancedDynamicTexture;
     private card: Rectangle;
 
+    /**
+     * @param {string} title - The title of the card.
+     * @param {string} description - The description of the card.
+     * @param {string} tooltip - The tooltip of the card.
+     * @param {Function} action - The action to be executed when the card is used.
+     * @param {number} positionX - The x-coordinate of the position of the card.
+     * @param {number} positionY - The y-coordinate of the position of the card.
+     * @param {number} width - The width of the card.
+     * @param {number} height - The height of the card.
+     */
+
     constructor(
         title: string,
         content: string,
