@@ -1,13 +1,16 @@
 import { Mesh, TransformNode, Vector3 } from "@babylonjs/core";
-import { BehaviorName, ElementType } from "../Global";
+import { BehaviorName, ElementType, TowerAbilitiesType } from "../Global";
 import UpdateableBehavior from "../UpdateableBehavior";
 import UpdateableNode from "../UpdateableNode";
 
 export default class ProjectileBehavior extends UpdateableBehavior{
     public name = BehaviorName.Projectile;
 
-    constructor(private _speed: number, private _damage: number, private _direction: Vector3, public element: ElementType) {
+    public abilities: TowerAbilitiesType;
+
+    constructor(private _speed: number, private _damage: number, private _direction: Vector3, public element: ElementType, abilities: TowerAbilitiesType) {
         super();
+        this.abilities = abilities;
     }
 
     public attach(target: UpdateableNode): void {

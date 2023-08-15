@@ -2,9 +2,15 @@ import { AdvancedDynamicTexture, Button, Control, Rectangle, TextBlock } from "@
 import { BehaviorName } from "../Global";
 import UpdateableBehavior from "../UpdateableBehavior";
 
+export enum CardType {
+    Upgrade,
+    Tower,
+}
+
 export class Card {
     private _guiTexture: AdvancedDynamicTexture;
     private card: Rectangle;
+    public cardType: CardType;
 
     /**
      * @param {string} title - The title of the card.
@@ -18,6 +24,7 @@ export class Card {
      */
 
     constructor(
+        cardType: CardType, // ADD VISUAL CHANGE
         title: string,
         content: string,
         buttonText: string,
@@ -25,7 +32,7 @@ export class Card {
         positionX: number,
         positionY: number,
         width: number,
-        height: number
+        height: number,
     ) {
         // Create the GUI texture
         this._guiTexture = AdvancedDynamicTexture.CreateFullscreenUI("UI");
@@ -44,6 +51,10 @@ export class Card {
         this.card.top = `${positionY}px`;
         this._guiTexture.addControl(this.card);
         this.card.isVisible = false;
+        
+        // Assigning the card type
+        
+        this.cardType = cardType;
 
         // Create the title text block
         const titleBlock = new TextBlock();
@@ -80,13 +91,13 @@ export class Card {
     }
 
     public hide(): void {
-            this.card.isVisible = false;
+        this.card.isVisible = false;
     }
     
     public show(): void {
-            this.card.isVisible = true;
+        this.card.isVisible = true;
     }
-    }
+}
 
 export class CardHandBehavior extends UpdateableBehavior {
     public name = BehaviorName.CardHand;

@@ -169,3 +169,37 @@ export function addGold(amount: number) {
 export function subtractGold(amount: number) {
     gold -= amount;
 }
+
+export enum TowerAttributes {
+    AttackSpeed = "attackSpeed",
+    Health = "health",
+    Damage = "damage",
+    ArrowCount = "arrowCount",
+    AttackRange = "range"
+}
+
+export type TowerAttributesType = {
+    [key in TowerAttributes]: number;
+}
+
+export enum TowerAbilities {
+    RapidFire = "rapidFire",
+    PiercingShots = "piercingShots",
+    SplashDamage = "splashDamage",
+    ExtendedRange = "extendedRange",
+    ArmorPiercingRounds = "armorPiercingRounds",
+    CamouflageDetection = "camouflageDetection",
+    SniperMode = "sniperMode",
+    LifeSteal = "lifeSteal",
+    CriticalStrikes = "criticalStrikes",
+    FreezeAttack = "freezeAttack",
+    MultiShot = "multiShot",
+    AerialAssault = "aerialAssault",
+    ToxicCloud = "toxicCloud"
+}
+
+export type TowerAbilityEntry = {
+    [key in TowerAbilities]?: number | null;
+}
+
+export type TowerAbilitiesType = TowerAbilityEntry[];

@@ -1,5 +1,5 @@
 import { Color3, Mesh, MeshBuilder, Space, StandardMaterial, TransformNode, Vector3 } from "@babylonjs/core";
-import { BehaviorName, objects, Tag, ElementType, ElementColor, ElementMaterial as ElementMaterial, IN_GAME_SECOND, TimerMode } from "../Global";
+import { BehaviorName, objects, Tag, ElementType, ElementColor, ElementMaterial as ElementMaterial, IN_GAME_SECOND, TimerMode, TowerAttributesType, TowerAbilities, TowerAbilitiesType } from "../Global";
 import ProjectileBehavior from "./ProjectileBehavior";
 import { TagBehavior } from "./TagBehavior";
 import UpdateableBehavior from "../UpdateableBehavior";
@@ -10,10 +10,14 @@ export default class TowerBehavior extends UpdateableBehavior {
     public name = BehaviorName.Tower;
     
     private _mesh: Mesh | null = null;
+    public stats: TowerAttributesType;
+    public abilities: TowerAbilitiesType;
 
     public target: null | UpdateableNode = null;
-    constructor(private _attackSpeed: number, private _towerAttackRadius: number, public element: ElementType) {
+    constructor(public element: ElementType, stats: TowerAttributesType, abilities: TowerAbilitiesType) {
         super();
+        this.stats = stats
+        this.abilities = abilities
     }
 
     public attach(target: UpdateableNode): void {
@@ -33,7 +37,7 @@ export default class TowerBehavior extends UpdateableBehavior {
         this._mesh.setPositionWithLocalVector(Vector3.ZeroReadOnly);
 
         const timerBehavior = this._node.getBehaviorByName(BehaviorName.Timer) as TimerBehavior;
-        timerBehavior.start(() => this.shootIfTargetIsAvailable(), IN_GAME_SECOND/this._attackSpeed, TimerMode.Interval);
+        timerBehavior.start(() => this.shootIfTargetIsAvailable(), IN_GAME_SECOND/this.stats.attackSpeed, TimerMode.Interval);
     }
 
     public attackTarget(): void {
@@ -46,7 +50,7 @@ export default class TowerBehavior extends UpdateableBehavior {
         const direction = targetPosition.subtract(towerGroudPosition).normalize();
 
         let rockContainerNode = new UpdateableNode("Projectile-Container", this._node.getScene());
-        const projectileBehavior = new ProjectileBehavior(100, 10, direction, this.element);
+        const projectileBehavior = new ProjectileBehavior(100, 10, direction, this.element, this.abilities);
         rockContainerNode.addBehavior(projectileBehavior);
         const tagBehavior = new TagBehavior([Tag.Projectile]);
         rockContainerNode.addBehavior(tagBehavior);
@@ -114,10 +118,10 @@ export default class TowerBehavior extends UpdateableBehavior {
     }
 
     get towerAttackRadius(){
-        return this._towerAttackRadius;
+        return this.stats.range;
     }
     
     get towerAttackRadiusSquared(){
-        return this._towerAttackRadius * this._towerAttackRadius;
+        return this.stats.range * this.stats.range;
     }
 }
