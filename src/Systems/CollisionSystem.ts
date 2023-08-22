@@ -1,5 +1,5 @@
 import EnemyBehavior from "../Behaviors/EnemyBehavior";
-import { addGold, BehaviorName, objects, Tag } from "../Global";
+import { addGold, BehaviorName, objects, Tag, TowerAbilities } from "../Global";
 import { TagBehavior } from "../Behaviors/TagBehavior";
 import TowerBehavior from "../Behaviors/TowerBehaviour";
 import UpdateableNode from "../UpdateableNode";
@@ -64,5 +64,15 @@ function projectileEnemyCollision(projectile: UpdateableNode, enemy: UpdateableN
     const healthBarBehavior = enemy.getBehaviorByName(BehaviorName.HealthBar) as HealthBarBehavior;
     const projectileBehavior = projectile.getBehaviorByName(BehaviorName.Projectile) as ProjectileBehavior;
     healthBarBehavior.reduceHealth(ElementalSystem.calculateDamage(1, projectileBehavior.element, enemyBehavior.element), BarType.Health);
+
+    if (projectileBehavior.abilities.includes(TowerAbilities.PiercingShots)) {
+        if (projectileBehavior.shotsLeft >= 1) {
+            projectileBehavior.shotsLeft -= 1;
+            return;
+        }
+    }
+    
     projectile.dispose();
 }
+
+// Problem: Make it so that a single enemy and projectile only collide once.

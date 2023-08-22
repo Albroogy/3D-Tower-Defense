@@ -9,16 +9,16 @@ export enum CardType {
 
 export class Card {
     private _guiTexture: AdvancedDynamicTexture;
-    private card: Rectangle;
+    public card: Rectangle;
     public cardType: CardType;
+    public positionX: number = 0;
+    public positionY: number = 0;
 
     /**
      * @param {string} title - The title of the card.
      * @param {string} description - The description of the card.
      * @param {string} tooltip - The tooltip of the card.
      * @param {Function} action - The action to be executed when the card is used.
-     * @param {number} positionX - The x-coordinate of the position of the card.
-     * @param {number} positionY - The y-coordinate of the position of the card.
      * @param {number} width - The width of the card.
      * @param {number} height - The height of the card.
      */
@@ -29,8 +29,6 @@ export class Card {
         content: string,
         buttonText: string,
         buttonAction: (eventData: any) => void,
-        positionX: number,
-        positionY: number,
         width: number,
         height: number,
     ) {
@@ -47,8 +45,8 @@ export class Card {
         this.card.background = "linear-gradient(to bottom, #bbbbbb, #ffffff)";
         this.card.paddingBottom = "15px";
         this.card.paddingTop = "10px";
-        this.card.left = `${positionX}px`;
-        this.card.top = `${positionY}px`;
+        this.card.left = `${this.positionX}px`;
+        this.card.top = `${this.positionY}px`;
         this._guiTexture.addControl(this.card);
         this.card.isVisible = false;
         
@@ -96,6 +94,14 @@ export class Card {
     
     public show(): void {
         this.card.isVisible = true;
+    }
+
+    public setCardLocation(x: number, y: number): void {
+        this.positionX = x; 
+        this.positionY = y;
+
+        this.card.left = `${this.positionX}px`;
+        this.card.top = `${this.positionY}px`;
     }
 }
 

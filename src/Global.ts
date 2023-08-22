@@ -198,8 +198,5 @@ export enum TowerAbilities {
     ToxicCloud = "toxicCloud"
 }
 
-export type TowerAbilityEntry = {
-    [key in TowerAbilities]?: number | null;
-}
 
-export type TowerAbilitiesType = TowerAbilityEntry[];
+export type TowerAbilitiesType = Array<TowerAbilities>;
