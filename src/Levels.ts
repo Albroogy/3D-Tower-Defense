@@ -4,7 +4,7 @@ import { TagBehavior } from "./Behaviors/TagBehavior";
 import { TimerBehavior } from "./Behaviors/TimerBehavior";
 import TowerBehavior from "./Behaviors/TowerBehaviour";
 import WaveSpawnerBehavior, { SpawnInfo } from "./Behaviors/WaveSpawnerBehavior";
-import { ElementType, objects, scene, Tag, TowerAbilitiesType, TowerAttributes, TowerAttributesType } from "./Global";
+import { ElementType, objects, scene, Tag, TowerAbilitiesType, TowerAttribute, TowerAttributesType } from "./Global";
 import UpdateableNode from "./UpdateableNode";
 import { generateRandomWave, generateTestingWave } from "./waveData";
 
@@ -104,11 +104,11 @@ export function testingLevel() {
     spawner.parent = gameSystem;
 
     let beginnerTowerStats: TowerAttributesType = {
-        [TowerAttributes.AttackSpeed]: 2.5,
-        [TowerAttributes.Health]: 0,
-        [TowerAttributes.Damage]: 0,
-        [TowerAttributes.ArrowCount]: 0,
-        [TowerAttributes.AttackRange]: 100
+        [TowerAttribute.AttackSpeed]: 2.5,
+        [TowerAttribute.Health]: 0,
+        [TowerAttribute.Damage]: 0,
+        [TowerAttribute.ArrowCount]: 0,
+        [TowerAttribute.AttackRange]: 100
     }
 
     let abilitiesData: TowerAbilitiesType = []

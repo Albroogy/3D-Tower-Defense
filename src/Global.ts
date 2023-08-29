@@ -170,7 +170,7 @@ export function subtractGold(amount: number) {
     gold -= amount;
 }
 
-export enum TowerAttributes {
+export enum TowerAttribute {
     AttackSpeed = "attackSpeed",
     Health = "health",
     Damage = "damage",
@@ -178,11 +178,7 @@ export enum TowerAttributes {
     AttackRange = "range"
 }
 
-export type TowerAttributesType = {
-    [key in TowerAttributes]: number;
-}
-
-export enum TowerAbilities {
+export enum TowerAbility {
     RapidFire = "rapidFire",
     PiercingShots = "piercingShots",
     SplashDamage = "splashDamage",
@@ -198,5 +194,5 @@ export enum TowerAbilities {
     ToxicCloud = "toxicCloud"
 }
 
-
-export type TowerAbilitiesType = Array<TowerAbilities>;
+export type TowerAttributesType = Record<TowerAttribute, number>;
+export type TowerAbilitiesType = Array<TowerAbility>;

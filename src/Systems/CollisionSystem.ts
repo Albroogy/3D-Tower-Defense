@@ -1,5 +1,5 @@
 import EnemyBehavior from "../Behaviors/EnemyBehavior";
-import { addGold, BehaviorName, objects, Tag, TowerAbilities } from "../Global";
+import { addGold, BehaviorName, objects, Tag, TowerAbility } from "../Global";
 import { TagBehavior } from "../Behaviors/TagBehavior";
 import TowerBehavior from "../Behaviors/TowerBehaviour";
 import UpdateableNode from "../UpdateableNode";
@@ -65,7 +65,7 @@ function projectileEnemyCollision(projectile: UpdateableNode, enemy: UpdateableN
     const projectileBehavior = projectile.getBehaviorByName(BehaviorName.Projectile) as ProjectileBehavior;
     healthBarBehavior.reduceHealth(ElementalSystem.calculateDamage(1, projectileBehavior.element, enemyBehavior.element), BarType.Health);
 
-    if (projectileBehavior.abilities.includes(TowerAbilities.PiercingShots)) {
+    if (projectileBehavior.abilities.includes(TowerAbility.PiercingShots)) {
         if (projectileBehavior.shotsLeft >= 1) {
             projectileBehavior.shotsLeft -= 1;
             return;
