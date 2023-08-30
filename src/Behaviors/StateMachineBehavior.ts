@@ -2,7 +2,6 @@ import { BehaviorName } from "../Global";
 import UpdateableBehavior from "../UpdateableBehavior";
 import UpdateableNode from "../UpdateableNode";
 
-
 type UpdateableNodeFunctor = (entity: UpdateableNode) => void;
 type UpdateStateFunctor<StateEnum> = (deltaTime: number, entity: UpdateableNode) => StateEnum | undefined;
 

@@ -1,5 +1,4 @@
 import { SceneLoader } from "@babylonjs/core/Loading/sceneLoader";
-import { Scene } from "@babylonjs/core/scene";
 import { AbstractMesh } from "@babylonjs/core/Meshes/abstractMesh";
 import UpdateableBehavior from "../UpdateableBehavior";
 import UpdateableNode from "../UpdateableNode";

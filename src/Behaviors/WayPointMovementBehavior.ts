@@ -1,5 +1,5 @@
-import { Curve3, Mesh, Quaternion, TransformNode, Vector3 } from "@babylonjs/core";
-import { BehaviorName, ElementType } from "../Global";
+import { Curve3, Vector3 } from "@babylonjs/core";
+import { BehaviorName } from "../Global";
 import UpdateableBehavior from "../UpdateableBehavior";
 import UpdateableNode from "../UpdateableNode";
 

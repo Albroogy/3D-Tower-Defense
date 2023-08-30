@@ -40,7 +40,7 @@ export const onPlacingTowersActivation = (currentObject: UpdateableNode) => {
     gameState = GameState.PlacingTowers;
     const cardHandBehavior = currentObject.getBehaviorByName(BehaviorName.CardHand) as CardHandBehavior;
     cardHandBehavior.showAllCards();
-    console.log(GameState.PlacingTowers);
+    console.log(GameState.PlacingTowers, cardHandBehavior._cards);
 }
 export const onPlacingTowersUpdate = (): GameState | undefined => {
     if (allPressedKeys[KEYS.Escape]){

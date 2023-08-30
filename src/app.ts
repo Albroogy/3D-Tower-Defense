@@ -1,19 +1,16 @@
-import "@babylonjs/core/Debug/debugLayer";
-import "@babylonjs/inspector";
-import "@babylonjs/loaders/glTF";
 import { Animation } from "@babylonjs/core/Animations";
-import { ArcRotateCamera, Vector3, HemisphericLight, MeshBuilder, StandardMaterial, Matrix, GroundMesh, Ray, SceneLoader, AbstractMesh} from "@babylonjs/core";
+import { ArcRotateCamera, Vector3, HemisphericLight, MeshBuilder, StandardMaterial, GroundMesh, SceneLoader, AbstractMesh} from "@babylonjs/core";
 import UpdateableNodeManager from "./UpdateableNodeManager";
 import { TagBehavior } from "./Behaviors/TagBehavior";
 import UpdateableNode from "./UpdateableNode";
-import { BehaviorName, objects, Tag, ElementType, ElementMaterial, ElementColor, KEYS, allPressedKeys, IN_GAME_SECOND, addEventListenerCustom, removeEventListenersOfType, globalDTMultiplier, engine, scene, canvas} from "./Global";
+import { BehaviorName, objects, Tag, ElementType, ElementMaterial, ElementColor, IN_GAME_SECOND, globalDTMultiplier, engine, scene, canvas} from "./Global";
 import CollisionSystem from "./Systems/CollisionSystem";
-import { CardHandBehavior } from "./Behaviors/CardHandBehavior";
+import { CardHandBehavior} from "./Behaviors/CardHandBehavior";
 import GameBehavior from "./Behaviors/GameBehavior";
 import StateMachineBehavior from "./Behaviors/StateMachineBehavior";
 import { UIOverlayBehavior } from "./Behaviors/UIOverlayBehavior";
 import { testingLevel } from "./Levels";
-import { cards } from "./Cards";
+
 
 // initialize babylon scene and engine
 export let ground: GroundMesh | undefined;
@@ -25,7 +22,7 @@ export const gameSystem = new UpdateableNode("GameSystem", scene);
 const stateMachineBehavior = new StateMachineBehavior();
 gameSystem.addBehavior(stateMachineBehavior);
 
-const cardHand = new CardHandBehavior(cards);
+const cardHand = new CardHandBehavior();
 const gameBehavior = new GameBehavior();
 const uiOverlayBehavior = new UIOverlayBehavior();
 

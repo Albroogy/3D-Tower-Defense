@@ -1,7 +1,6 @@
 import EnemyBehavior from "../Behaviors/EnemyBehavior";
-import { addGold, BehaviorName, objects, Tag, TowerAbility } from "../Global";
+import { BehaviorName, Tag, TowerAbility } from "../Global";
 import { TagBehavior } from "../Behaviors/TagBehavior";
-import TowerBehavior from "../Behaviors/TowerBehaviour";
 import UpdateableNode from "../UpdateableNode";
 import ElementalSystem from "./ElementalSystem";
 import ProjectileBehavior from "../Behaviors/ProjectileBehavior";

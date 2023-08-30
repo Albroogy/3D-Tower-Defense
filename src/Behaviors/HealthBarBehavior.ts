@@ -1,6 +1,5 @@
-import { TransformNode, Vector3 } from "@babylonjs/core";
-import { AdvancedDynamicTexture, Button, TextBlock, Rectangle } from "@babylonjs/gui";
-import { addGold, BehaviorName, objects } from "../Global";
+import { AdvancedDynamicTexture, Rectangle } from "@babylonjs/gui";
+import { addGold, BehaviorName } from "../Global";
 import UpdateableBehavior from "../UpdateableBehavior";
 import UpdateableNode from "../UpdateableNode";
 
@@ -39,7 +38,7 @@ export class HealthBar {
         this._healthBar.thickness = 0;
         this._healthBarBackground.addControl(this._healthBar);
     }
-    
+
     public attach(target: UpdateableNode): void {
         this._node = target;
         if (this._isAttached) {
@@ -50,10 +49,10 @@ export class HealthBar {
         const healthPercentage = this._currentHealth / this._maxHealth;
         const healthBarWidth = healthPercentage * this._width;
         const remainingWidth = this._width - healthBarWidth;
-      
+
         // Update the width of the health bar
         this._healthBar.width = healthBarWidth + "px";
-      
+
         // Adjust the position of the health bar
         this._healthBar.leftInPixels = -remainingWidth;
     }
@@ -71,7 +70,7 @@ export class HealthBar {
     }
 }
 
-export default class HealthBarBehavior extends UpdateableBehavior { 
+export default class HealthBarBehavior extends UpdateableBehavior {
     public name = BehaviorName.HealthBar;
 
     private _healthBars: Array<HealthBar>;
@@ -80,7 +79,7 @@ export default class HealthBarBehavior extends UpdateableBehavior {
         super();
         this._healthBars = healthBars;
     }
-    
+
     public update(): void {
         for (const bar of this._healthBars) {
             bar.update();

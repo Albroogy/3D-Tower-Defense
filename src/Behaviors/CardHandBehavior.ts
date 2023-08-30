@@ -1,12 +1,18 @@
+import { Matrix, Ray } from "@babylonjs/core";
 import { AdvancedDynamicTexture, Button, Control, Rectangle, TextBlock } from "@babylonjs/gui";
+import { ground } from "../app";
 import { Card } from "../Cards";
-import { BehaviorName, gold } from "../Global";
+import { towerCards, upgradeCards } from "../Data/CardData";
+import { addEventListenerCustom, BehaviorName, engine, gold, scene } from "../Global";
 import UpdateableBehavior from "../UpdateableBehavior";
 
 export enum CardType {
     Upgrade,
     Tower,
 }
+
+const cardWidth: number = 200;
+const cardHeight: number = 300;
 
 export class CardUI {
     public static activelyDraggedCard: Card | null;
@@ -19,12 +25,10 @@ export class CardUI {
     /**
      * @param {number} width - The width of the cardRect.
      * @param {number} height - The height of the cardRect.
-     */
-
-    constructor(
-        card: Card,
-        width: number,
-        height: number,
+    */
+   
+   constructor(
+        card: Card
     ) {
         // Create the GUI texture
         this._guiTexture = AdvancedDynamicTexture.CreateFullscreenUI("UI");
@@ -33,8 +37,8 @@ export class CardUI {
 
         // Create the cardRect rectangle
         this.cardRect = new Rectangle();
-        this.cardRect.width = `${width}px`;
-        this.cardRect.height = `${height}px`;
+        this.cardRect.width = `${cardWidth}px`;
+        this.cardRect.height = `${cardHeight}px`;
         this.cardRect.cornerRadius = 10;
         this.cardRect.color = "white";
         this.cardRect.thickness = 3;
@@ -45,6 +49,8 @@ export class CardUI {
         this.cardRect.top = `${this.positionY}px`;
         this._guiTexture.addControl(this.cardRect);
         this.cardRect.isVisible = false;
+        this.cardRect.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM;
+        this.cardRect.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
 
         // Create the title text block
         const titleBlock = new TextBlock();
@@ -68,8 +74,8 @@ export class CardUI {
 
         // Create the button
         const button = Button.CreateSimpleButton("button", "");
-        button.width = `${width}px`;
-        button.height = `${height}px`;
+        button.width = `${cardWidth}px`;
+        button.height = `${cardHeight}px`;
         button.color = "transparent"; // Make the button text color transparent
         button.background = "transparent"; // Make the button background transparent
         button.cornerRadius = 5;
@@ -79,8 +85,8 @@ export class CardUI {
                 CardUI.activelyDraggedCard = this._card;
             }
         });
-        button.left = `${(width - button.widthInPixels) / 2}px`;
-        button.top = `${(height - button.heightInPixels) / 2}px`;
+        button.left = `${(cardWidth - button.widthInPixels) / 2}px`;
+        button.top = `${(cardHeight - button.heightInPixels) / 2}px`;
         this.cardRect.addControl(button);
     }
 
@@ -101,14 +107,19 @@ export class CardUI {
     }
 }
 
+const startX = 0;  // Starting X position (example value)
+const startY = 0; // Starting Y position (example value)
+const offset = 250;  // Offset distance between each card on the canvas (can be adjusted).
+
 export class CardHandBehavior extends UpdateableBehavior {
     public name = BehaviorName.CardHand;
     
-    private _cards: CardUI[];
+    public _cards: CardUI[];
 
-    constructor(cards: CardUI[] = []) {
+    constructor() {
         super();
-        this._cards = cards;
+        this._fillCardHand(5);
+        this._adjustCardPositions();
     }
 
     public addCard(cardRect: CardUI): void {
@@ -129,4 +140,65 @@ export class CardHandBehavior extends UpdateableBehavior {
     public showAllCards(): void {
         this._cards.forEach((cardRect) => cardRect.show());
     }
+
+    private _fillCardHand(count: number): void {
+        // Calculate the number of each type of card based on the distribution
+        this._cards = [];
+        const towerCount = Math.round(0.6 * count);
+        const upgradeCount = count - towerCount;
+    
+        function getRandomFromArray<T>(arr: Array<T>): T {
+            const randomIndex = ~~(Math.random() * arr.length);
+            return arr[randomIndex];
+        }
+    
+        // Get the specified number of random tower and upgrade cards
+
+        for (let i = 0; i < towerCount; i++) {
+            this._cards.push(new CardUI(getRandomFromArray(towerCards)));
+        }
+
+        for (let i = 0; i < upgradeCount; i++) {
+            this._cards.push(new CardUI(getRandomFromArray(upgradeCards)));
+        }
+    }
+    private _adjustCardPositions(): void {
+        this._cards.forEach((cardUI: CardUI, index) => {
+            cardUI.setCardLocation((startX + index * offset), startY);
+            console.log((startX + index * offset), startY);
+        });
+    }
 }
+
+/**
+ * This function is triggered on pointer up event. It determines if a card has been selected, 
+ * if yes it creates a tower of the selected element type at the point where the pointer was lifted.
+ * If no card was selected, it does nothing.
+ * 
+ * @param {PointerEvent} eventData - The event data from the pointer up event.
+ */
+const onPointerUp = (eventData: PointerEvent) => {
+    if (!CardUI.activelyDraggedCard) {
+        return;
+    }
+
+    // Get the mouse position relative to the canvas
+    let r: Ray = Ray.CreateNew(scene.pointerX, scene.pointerY,
+        engine.getRenderWidth(),
+        engine.getRenderHeight(),
+        Matrix.Identity(),
+        scene.getViewMatrix(),
+        scene.getProjectionMatrix()
+    );
+    const pickingInfo = r.intersectsMesh(ground);
+    const finalPos = pickingInfo.pickedPoint;
+    if (!finalPos) {
+        return;
+    }
+    finalPos.y = 1.25;
+
+    CardUI.activelyDraggedCard.play(finalPos);
+    CardUI.activelyDraggedCard = null;
+};
+
+addEventListenerCustom("pointerup", onPointerUp);

@@ -1,4 +1,4 @@
-import { Mesh, TransformNode, Vector3 } from "@babylonjs/core";
+import { Vector3 } from "@babylonjs/core";
 import { BehaviorName, ElementType, TowerAbility, TowerAbilitiesType } from "../Global";
 import UpdateableBehavior from "../UpdateableBehavior";
 import UpdateableNode from "../UpdateableNode";

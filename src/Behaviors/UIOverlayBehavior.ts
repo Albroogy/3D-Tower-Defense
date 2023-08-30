@@ -17,10 +17,6 @@ export class UIOverlayBehavior extends UpdateableBehavior {
         super();
         this._guiTexture = AdvancedDynamicTexture.CreateFullscreenUI("UI");
 
-        const screenWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-
-        const screenHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-
         const sharedStyleSettings: Record<string, any> = {
             color: "white",
             fontSize: 24,

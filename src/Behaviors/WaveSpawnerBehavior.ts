@@ -1,6 +1,6 @@
-import { Mesh, MeshBuilder, Scene, StandardMaterial, TransformNode, Vector3, Vector4 } from "@babylonjs/core";
+import { MeshBuilder, Scene, Vector3, Vector4 } from "@babylonjs/core";
 import EnemyBehavior from "./EnemyBehavior";
-import { BehaviorName, ElementColor, ElementMaterial as ElementMaterial, ElementType, IN_GAME_SECOND, objects, OFFSET, scene, Tag, TimerMode } from "../Global";
+import { BehaviorName, ElementMaterial as ElementMaterial, ElementType, IN_GAME_SECOND, objects, OFFSET, Tag, TimerMode } from "../Global";
 import { TagBehavior } from "./TagBehavior";
 import UpdateableBehavior from "../UpdateableBehavior";
 import UpdateableNode from "../UpdateableNode";
