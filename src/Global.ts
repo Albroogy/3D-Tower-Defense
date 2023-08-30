@@ -155,13 +155,16 @@ export enum TowerAbility {
     ExtendedRange = "extendedRange",
     ArmorPiercingRounds = "armorPiercingRounds",
     CamouflageDetection = "camouflageDetection",
-    SniperMode = "sniperMode",
     LifeSteal = "lifeSteal",
     CriticalStrikes = "criticalStrikes",
     FreezeAttack = "freezeAttack",
     MultiShot = "multiShot",
     AerialAssault = "aerialAssault",
     ToxicCloud = "toxicCloud"
+}
+
+export enum TowerStatAbility {
+    SniperMode = "sniperMode",
 }
 
 export type TowerAttributesType = Record<TowerAttribute, number>;

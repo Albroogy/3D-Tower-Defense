@@ -1,5 +1,5 @@
 import { TowerCard, UpgradeCard } from "../Card";
-import { ElementType, TowerAbility, TowerAttribute, TowerAttributesType } from "../Global";
+import { ElementType, TowerAbility, TowerAttribute, TowerAttributesType, TowerStatAbility } from "../Global";
 
 let BaseCardStats: TowerAttributesType = {
     [TowerAttribute.AttackSpeed]: 2.5,
@@ -65,13 +65,17 @@ export const piercingUpgradeCard = new UpgradeCard(
     5,
     "Piercing Upgrade",
     "Enables shots to pierce through enemies",
-    {    [TowerAttribute.AttackSpeed]: 0,
-        [TowerAttribute.Health]: 0,
-        [TowerAttribute.Damage]: 0,
-        [TowerAttribute.ArrowCount]: 0,
-        [TowerAttribute.AttackRange]: 0},
+    null,
     [TowerAbility.PiercingShots]
 );
+
+export const sniperUpgradeCard = new UpgradeCard(
+    5,
+    "Sniper Upgrade",
+    "Enables further range when attacking, with stronger shots but slower speed",
+    null,
+    [TowerStatAbility.SniperMode]
+)
 
 export const towerCards = [fireCard, waterCard, earthCard, airCard];
 export const upgradeCards = [fastUpgradeCard, piercingUpgradeCard];

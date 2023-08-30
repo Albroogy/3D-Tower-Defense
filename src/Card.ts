@@ -12,7 +12,7 @@ export class Card {
     public attributes: TowerAttributesType;
     public abilities: TowerAbilitiesType;
 
-    constructor(cost: number, title: string, description: string, attributes: TowerAttributesType, abilities: TowerAbilitiesType) {
+    constructor(cost: number, title: string, description: string, attributes: TowerAttributesType | null, abilities: TowerAbilitiesType) {
         this.cost = cost;
         this.title = title;
         this.description = description;
