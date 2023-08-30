@@ -1,12 +1,12 @@
 import { Vector3 } from "@babylonjs/core";
-import { gameSystem } from "./app";
-import { TagBehavior } from "./Behaviors/TagBehavior";
-import { TimerBehavior } from "./Behaviors/TimerBehavior";
-import TowerBehavior from "./Behaviors/TowerBehaviour";
-import WaveSpawnerBehavior, { SpawnInfo } from "./Behaviors/WaveSpawnerBehavior";
-import { ElementType, objects, scene, Tag, TowerAbilitiesType, TowerAttribute, TowerAttributesType } from "./Global";
-import UpdateableNode from "./UpdateableNode";
-import { generateRandomWave, generateTestingWave } from "./waveData";
+import { gameSystem } from "../main";
+import { TagBehavior } from "../Behaviors/TagBehavior";
+import { TimerBehavior } from "../Behaviors/TimerBehavior";
+import TowerBehavior from "../Behaviors/TowerBehaviour";
+import WaveSpawnerBehavior, { SpawnInfo } from "../Behaviors/WaveSpawnerBehavior";
+import { ElementType, objects, scene, Tag, TowerAbilitiesType, TowerAttribute, TowerAttributesType } from "../Global";
+import UpdateableNode from "../BabylonUpdateable/UpdateableNode";
+import { generateRandomWave, generateTestingWave } from "./WaveData";
 
 export function level1() {
     const waves: Array<Array<SpawnInfo>> = [

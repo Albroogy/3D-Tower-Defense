@@ -1,7 +1,7 @@
 import { AdvancedDynamicTexture, Rectangle } from "@babylonjs/gui";
 import { addGold, BehaviorName } from "../Global";
-import UpdateableBehavior from "../UpdateableBehavior";
-import UpdateableNode from "../UpdateableNode";
+import UpdateableBehavior from "../BabylonUpdateable/UpdateableBehavior";
+import UpdateableNode from "../BabylonUpdateable/UpdateableNode";
 
 export class HealthBar {
     private _healthBarBackground: Rectangle;

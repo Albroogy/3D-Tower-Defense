@@ -1,7 +1,7 @@
 import { AdvancedDynamicTexture, TextBlock, Control } from "@babylonjs/gui";
 import { BehaviorName, gold, objects, Tag } from "../Global";
-import UpdateableBehavior from "../UpdateableBehavior";
-import UpdateableNode from "../UpdateableNode";
+import UpdateableBehavior from "../BabylonUpdateable/UpdateableBehavior";
+import UpdateableNode from "../BabylonUpdateable/UpdateableNode";
 import { TagBehavior } from "./TagBehavior";
 import WaveSpawner from "./WaveSpawnerBehavior";
 

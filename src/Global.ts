@@ -1,5 +1,5 @@
 import { Color3, Engine, Scene, StandardMaterial } from "@babylonjs/core";
-import UpdateableNode from "./UpdateableNode";
+import UpdateableNode from "./BabylonUpdateable/UpdateableNode";
 export const allPressedKeys: Record<string, boolean> = {};
 
 export const KEYS = {
@@ -90,36 +90,6 @@ export function getRandomEnumValue<T>(anEnum: T): T[keyof T] {
 
 export const IN_GAME_SECOND: number = 1000;
 
-// Variable to store event listeners
-let eventListeners = [];
-
-export function addEventListenerCustom(type: string, listener: EventListenerOrEventListenerObject) {
-    // Add the event listener
-    document.addEventListener(type, listener);
-  
-    // Store the event listener and its type
-    eventListeners.push({ type, listener });
-  }
-  
-// Function to remove all event listeners of a certain type
-export function removeEventListenersOfType(type: string) {
-
-    // Iterate over the stored event listeners
-
-    for (let i = eventListeners.length - 1; i >= 0; i--) {
-        const { eventType, listener } = eventListeners[i];
-
-        // Check if the event listener matches the specified type
-        if (eventType === type) {
-            // Remove the event listener
-            document.removeEventListener(type, listener);
-
-            // Remove the event listener from the stored array
-            eventListeners.splice(i, 1);
-        }
-    }
-}
-
 // create the canvas html element and attach it to the webpage
 export const canvas = document.createElement("canvas");
 canvas.style.width = "100%";
@@ -196,3 +166,11 @@ export enum TowerAbility {
 
 export type TowerAttributesType = Record<TowerAttribute, number>;
 export type TowerAbilitiesType = Array<TowerAbility>;
+
+const BeginnerTowerStats: TowerAttributesType = {
+    [TowerAttribute.AttackSpeed]: 2.5,
+    [TowerAttribute.Health]: 0,
+    [TowerAttribute.Damage]: 0,
+    [TowerAttribute.ArrowCount]: 0,
+    [TowerAttribute.AttackRange]: 100
+}

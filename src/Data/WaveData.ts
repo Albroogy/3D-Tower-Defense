@@ -1,5 +1,5 @@
-import { EnemyType, SpawnInfo } from "./Behaviors/WaveSpawnerBehavior";
-import { ElementType, getRandomEnumValue } from "./Global";
+import { EnemyType, SpawnInfo } from "../Behaviors/WaveSpawnerBehavior";
+import { ElementType, getRandomEnumValue } from "../Global";
 
 const enemyParameterMap = {
     [EnemyType.Sphere]: { diameter: 2 },

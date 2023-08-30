@@ -1,6 +1,6 @@
 import { allPressedKeys, BehaviorName, KEYS } from "../Global";
-import UpdateableBehavior from "../UpdateableBehavior";
-import UpdateableNode from "../UpdateableNode";
+import UpdateableBehavior from "../BabylonUpdateable/UpdateableBehavior";
+import UpdateableNode from "../BabylonUpdateable/UpdateableNode";
 import { CardHandBehavior } from "./CardHandBehavior";
 import StateMachineBehavior from "./StateMachineBehavior";
 

@@ -1,15 +1,15 @@
 import { Animation } from "@babylonjs/core/Animations";
 import { ArcRotateCamera, Vector3, HemisphericLight, MeshBuilder, StandardMaterial, GroundMesh, SceneLoader, AbstractMesh} from "@babylonjs/core";
-import UpdateableNodeManager from "./UpdateableNodeManager";
+import UpdateableNodeManager from "./BabylonUpdateable/UpdateableNodeManager";
 import { TagBehavior } from "./Behaviors/TagBehavior";
-import UpdateableNode from "./UpdateableNode";
+import UpdateableNode from "./BabylonUpdateable/UpdateableNode";
 import { BehaviorName, objects, Tag, ElementType, ElementMaterial, ElementColor, IN_GAME_SECOND, globalDTMultiplier, engine, scene, canvas} from "./Global";
 import CollisionSystem from "./Systems/CollisionSystem";
 import { CardHandBehavior} from "./Behaviors/CardHandBehavior";
 import GameBehavior from "./Behaviors/GameBehavior";
 import StateMachineBehavior from "./Behaviors/StateMachineBehavior";
 import { UIOverlayBehavior } from "./Behaviors/UIOverlayBehavior";
-import { testingLevel } from "./Levels";
+import { testingLevel } from "./Data/LevelData";
 
 
 // initialize babylon scene and engine

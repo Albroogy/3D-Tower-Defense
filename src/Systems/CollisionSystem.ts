@@ -1,8 +1,8 @@
 import EnemyBehavior from "../Behaviors/EnemyBehavior";
 import { BehaviorName, Tag, TowerAbility } from "../Global";
 import { TagBehavior } from "../Behaviors/TagBehavior";
-import UpdateableNode from "../UpdateableNode";
-import ElementalSystem from "./ElementalSystem";
+import UpdateableNode from "../BabylonUpdateable/UpdateableNode";
+import ElementalSystem from "./ElementSystem";
 import ProjectileBehavior from "../Behaviors/ProjectileBehavior";
 import HealthBarBehavior from "../Behaviors/HealthBarBehavior";
 

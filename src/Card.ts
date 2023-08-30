@@ -2,8 +2,8 @@ import { Vector3 } from "@babylonjs/core";
 import { TagBehavior } from "./Behaviors/TagBehavior";
 import { TimerBehavior } from "./Behaviors/TimerBehavior";
 import TowerBehavior from "./Behaviors/TowerBehaviour";
-import { addEventListenerCustom, BehaviorName, canvas, ElementType, engine, objects, scene, Tag, TowerAbilitiesType, TowerAttribute, TowerAttributesType} from "./Global";
-import UpdateableNode from "./UpdateableNode";
+import { BehaviorName, ElementType, objects, scene, Tag, TowerAbilitiesType, TowerAttributesType} from "./Global";
+import UpdateableNode from "./BabylonUpdateable/UpdateableNode";
 
 export class Card {
     public cost: number;
@@ -65,5 +65,3 @@ export class TowerCard extends Card {
         objects.push(tower);
     }
 }
-
-addEventListenerCustom("pointerup", onpointerup);

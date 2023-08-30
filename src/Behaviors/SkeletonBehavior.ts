@@ -1,7 +1,7 @@
 import { SceneLoader } from "@babylonjs/core/Loading/sceneLoader";
 import { AbstractMesh } from "@babylonjs/core/Meshes/abstractMesh";
-import UpdateableBehavior from "../UpdateableBehavior";
-import UpdateableNode from "../UpdateableNode";
+import UpdateableBehavior from "../BabylonUpdateable/UpdateableBehavior";
+import UpdateableNode from "../BabylonUpdateable/UpdateableNode";
 import { BehaviorName } from "../Global";
 import { Material, Vector3 } from "@babylonjs/core";
 

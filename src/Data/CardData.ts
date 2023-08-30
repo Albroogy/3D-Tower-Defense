@@ -1,4 +1,4 @@
-import { TowerCard, UpgradeCard } from "../Cards";
+import { TowerCard, UpgradeCard } from "../Card";
 import { ElementType, TowerAbility, TowerAttribute, TowerAttributesType } from "../Global";
 
 let BaseCardStats: TowerAttributesType = {

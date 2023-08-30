@@ -1,5 +1,5 @@
 import { BehaviorName, Tag } from "../Global";
-import UpdateableBehavior from "../UpdateableBehavior";
+import UpdateableBehavior from "../BabylonUpdateable/UpdateableBehavior";
 
 export class TagBehavior extends UpdateableBehavior {
     public name = BehaviorName.Tag;

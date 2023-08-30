@@ -1,7 +1,7 @@
 import { Vector3 } from "@babylonjs/core";
 import { BehaviorName, ElementType, TowerAbility, TowerAbilitiesType } from "../Global";
-import UpdateableBehavior from "../UpdateableBehavior";
-import UpdateableNode from "../UpdateableNode";
+import UpdateableBehavior from "../BabylonUpdateable/UpdateableBehavior";
+import UpdateableNode from "../BabylonUpdateable/UpdateableNode";
 
 export default class ProjectileBehavior extends UpdateableBehavior{
     public name = BehaviorName.Projectile;

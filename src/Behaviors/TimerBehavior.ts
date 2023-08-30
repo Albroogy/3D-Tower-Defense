@@ -1,5 +1,5 @@
 import { BehaviorName, IN_GAME_SECOND, TimerMode } from "../Global";
-import UpdateableBehavior from "../UpdateableBehavior";
+import UpdateableBehavior from "../BabylonUpdateable/UpdateableBehavior";
 
 export class TimerBehavior extends UpdateableBehavior {
     public name = BehaviorName.Timer;

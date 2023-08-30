@@ -1,10 +1,10 @@
 import { Matrix, Ray } from "@babylonjs/core";
 import { AdvancedDynamicTexture, Button, Control, Rectangle, TextBlock } from "@babylonjs/gui";
-import { ground } from "../app";
-import { Card } from "../Cards";
+import { ground } from "../main";
+import { Card } from "../Card";
 import { towerCards, upgradeCards } from "../Data/CardData";
 import { addEventListenerCustom, BehaviorName, engine, gold, scene } from "../Global";
-import UpdateableBehavior from "../UpdateableBehavior";
+import UpdateableBehavior from "../BabylonUpdateable/UpdateableBehavior";
 
 export enum CardType {
     Upgrade,

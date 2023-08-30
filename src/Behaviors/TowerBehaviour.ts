@@ -2,8 +2,8 @@ import { Mesh, MeshBuilder, Vector3 } from "@babylonjs/core";
 import { BehaviorName, objects, Tag, ElementType, ElementMaterial as ElementMaterial, IN_GAME_SECOND, TimerMode, TowerAttributesType, TowerAbilitiesType } from "../Global";
 import ProjectileBehavior from "./ProjectileBehavior";
 import { TagBehavior } from "./TagBehavior";
-import UpdateableBehavior from "../UpdateableBehavior";
-import UpdateableNode from "../UpdateableNode";
+import UpdateableBehavior from "../BabylonUpdateable/UpdateableBehavior";
+import UpdateableNode from "../BabylonUpdateable/UpdateableNode";
 import { TimerBehavior } from "./TimerBehavior";
 
 export default class TowerBehavior extends UpdateableBehavior {

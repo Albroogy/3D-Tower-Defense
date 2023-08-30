@@ -1,6 +1,6 @@
 import { BehaviorName, ElementType, TowerAbilitiesType } from "../Global";
-import UpdateableBehavior from "../UpdateableBehavior";
-import UpdateableNode from "../UpdateableNode";
+import UpdateableBehavior from "../BabylonUpdateable/UpdateableBehavior";
+import UpdateableNode from "../BabylonUpdateable/UpdateableNode";
 
 export default class EnemyBehavior extends UpdateableBehavior {
     public name = BehaviorName.Enemy;

@@ -1,6 +1,6 @@
 import { BehaviorName } from "../Global";
-import UpdateableBehavior from "../UpdateableBehavior";
-import UpdateableNode from "../UpdateableNode";
+import UpdateableBehavior from "../BabylonUpdateable/UpdateableBehavior";
+import UpdateableNode from "../BabylonUpdateable/UpdateableNode";
 
 type UpdateableNodeFunctor = (entity: UpdateableNode) => void;
 type UpdateStateFunctor<StateEnum> = (deltaTime: number, entity: UpdateableNode) => StateEnum | undefined;
