@@ -163,12 +163,14 @@ export enum TowerAbility {
     ToxicCloud = "toxicCloud"
 }
 
+
 export enum TowerStatAbility {
     SniperMode = "sniperMode",
+    Quickfire = "quickfire"
 }
 
 export type TowerAttributesType = Record<TowerAttribute, number>;
-export type TowerAbilitiesType = Array<TowerAbility>;
+export type TowerAbilitiesType = Array<TowerAbility | TowerStatAbility>;
 
 const BeginnerTowerStats: TowerAttributesType = {
     [TowerAttribute.AttackSpeed]: 2.5,

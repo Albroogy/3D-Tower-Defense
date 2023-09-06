@@ -57,15 +57,13 @@ export const fastUpgradeCard = new UpgradeCard(
     5,
     "Quickfire Upgrade",
     "Shots fire faster",
-    fastUpgradeStats,
-    []
+    [TowerStatAbility.Quickfire]
 );
 
 export const piercingUpgradeCard = new UpgradeCard(
     5,
     "Piercing Upgrade",
     "Enables shots to pierce through enemies",
-    null,
     [TowerAbility.PiercingShots]
 );
 
@@ -73,7 +71,6 @@ export const sniperUpgradeCard = new UpgradeCard(
     5,
     "Sniper Upgrade",
     "Enables further range when attacking, with stronger shots but slower speed",
-    null,
     [TowerStatAbility.SniperMode]
 )
 

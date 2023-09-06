@@ -1,10 +1,10 @@
 import { Matrix, Ray } from "@babylonjs/core";
 import { AdvancedDynamicTexture, Button, Control, Rectangle, TextBlock } from "@babylonjs/gui";
-import { ground } from "../main";
 import { Card } from "../Card";
 import { towerCards, upgradeCards } from "../Data/CardData";
-import { addEventListenerCustom, BehaviorName, engine, gold, scene } from "../Global";
+import { BehaviorName, engine, gold, scene } from "../Global";
 import UpdateableBehavior from "../BabylonUpdateable/UpdateableBehavior";
+import { ground } from "../main";
 
 export enum CardType {
     Upgrade,
@@ -201,4 +201,4 @@ const onPointerUp = (eventData: PointerEvent) => {
     CardUI.activelyDraggedCard = null;
 };
 
-addEventListenerCustom("pointerup", onPointerUp);
+addEventListener("pointerup", onPointerUp);
