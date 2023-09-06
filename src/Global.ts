@@ -148,6 +148,9 @@ export enum TowerAttribute {
     AttackRange = "range"
 }
 
+
+
+
 export enum TowerAbility {
     RapidFire = "rapidFire",
     PiercingShots = "piercingShots",
@@ -160,13 +163,18 @@ export enum TowerAbility {
     FreezeAttack = "freezeAttack",
     MultiShot = "multiShot",
     AerialAssault = "aerialAssault",
-    ToxicCloud = "toxicCloud"
+    ToxicCloud = "toxicCloud",
+    SplashMode = "SplashMode",
+    Freeze = "Freeze"
 }
+
+
 
 
 export enum TowerStatAbility {
     SniperMode = "sniperMode",
-    Quickfire = "quickfire"
+    Quickfire = "quickfire",
+    SplashMode = "SplashMode"
 }
 
 export type TowerAttributesType = Record<TowerAttribute, number>;

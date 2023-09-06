@@ -58,16 +58,17 @@ export class CardUI {
         titleBlock.fontSize = "24px";
         titleBlock.color = "black";
         titleBlock.textHorizontalAlignment = Control.HORIZONTAL_ALIGNMENT_CENTER;
-        titleBlock.top = 10;
+        titleBlock.top = -80;
         this.cardRect.addControl(titleBlock);
 
         // Create the content text block
         const contentBlock = new TextBlock();
-        contentBlock.text = `${this._card.description}\nStats: ${this._card.attributes}`;
+        // contentBlock.text = `${this._card.description}\nStats: ${this._card.attributes}`;
+        contentBlock.text = `${this._card.description}`;
         contentBlock.fontSize = "18px";
         contentBlock.color = "black";
         contentBlock.textWrapping = true;
-        contentBlock.top = 50;
+        contentBlock.top = 20;
         contentBlock.left = 5;
         contentBlock.width = 0.9;
         this.cardRect.addControl(contentBlock);

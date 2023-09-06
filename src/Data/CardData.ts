@@ -74,5 +74,20 @@ export const sniperUpgradeCard = new UpgradeCard(
     [TowerStatAbility.SniperMode]
 )
 
+export const splashUpgradeCard = new UpgradeCard(
+    5,
+    "Splash Upgrade",
+    "Arrows combust when they hit an enemy",
+    [TowerAbility.SplashMode]
+)
+
+export const freezeUpgradeCard = new UpgradeCard(
+    5,
+    "Freeze Upgrade",
+    "Arrows combust when they hit an enemy",
+    [TowerAbility.Freeze]
+)
+
+
 export const towerCards = [fireCard, waterCard, earthCard, airCard];
-export const upgradeCards = [fastUpgradeCard, piercingUpgradeCard];
+export const upgradeCards = [fastUpgradeCard, piercingUpgradeCard, sniperUpgradeCard, splashUpgradeCard, freezeUpgradeCard];

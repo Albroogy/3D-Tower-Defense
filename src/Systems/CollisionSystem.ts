@@ -70,6 +70,13 @@ function projectileEnemyCollision(projectile: UpdateableNode, enemy: UpdateableN
             return;
         }
     }
+    if (projectileBehavior.abilities.includes(TowerAbility.SplashMode)) {
+        // make all enemies in a certain radius explode
+    }
+    if (projectileBehavior.abilities.includes(TowerAbility.Freeze)) {
+        enemyBehavior.effects.push(TowerAbility.Freeze);
+        // Make this slow down the enemies for a certain time, instead of just adding freeze to effects.z
+    }
     
     projectile.dispose();
 }

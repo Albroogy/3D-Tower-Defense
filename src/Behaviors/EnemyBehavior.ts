@@ -8,7 +8,7 @@ export default class EnemyBehavior extends UpdateableBehavior {
     public speed: number;
     public element: ElementType;
     
-    public abilities: TowerAbilitiesType;
+    public effects: TowerAbilitiesType;
 
     constructor(speed: number, element: ElementType, health: number) {
         super();
