@@ -10,6 +10,8 @@ import GameBehavior from "./Behaviors/GameBehavior";
 import StateMachineBehavior from "./Behaviors/StateMachineBehavior";
 import { UIOverlayBehavior } from "./Behaviors/UIOverlayBehavior";
 import { testingLevel } from "./Data/LevelData";
+import { ActionRunner, Blackboard, ConditionRunner, DecisionTree, NonTerminalDecisionTreeNode, TerminalDecisionTreeNode } from "./Behaviors/DecisionTreeBehaviour";
+import WaveSpawner from "./Behaviors/WaveSpawnerBehavior";
 
 
 // initialize babylon scene and engine
@@ -114,3 +116,30 @@ export function updateGameLogic() {
     }
     scene.render();
 }
+
+
+
+let currentWave = 0;
+
+const CheckSmallWaveIndex: ConditionRunner = (board: Blackboard) => currentWave < 3;
+const CheckBigWaveIndex: ConditionRunner = (board: Blackboard) => currentWave >= 3;
+const printAction1: ActionRunner = (board: Blackboard) => console.log(1);
+const printAction2: ActionRunner = (board: Blackboard) => console.log(2);
+
+const root = new NonTerminalDecisionTreeNode();
+const actionNode1 = new TerminalDecisionTreeNode();
+actionNode1.action = printAction1;
+const actionNode2 = new TerminalDecisionTreeNode();
+actionNode2.action = printAction2;
+
+root.children = [actionNode1, actionNode2];
+root.childrenCondition = [CheckSmallWaveIndex, CheckBigWaveIndex];
+
+const tree = new DecisionTree();
+tree.root = root;
+const board: Blackboard = {};
+setInterval(() => {
+    console.log("current wave",currentWave, "chosen action---");
+    tree.evaluate(board)(board);
+    currentWave++;
+}, 2500);

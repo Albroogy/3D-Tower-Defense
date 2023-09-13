@@ -39,6 +39,7 @@ export enum BehaviorName {
     UIOverlay = "UIOverlay",
     WaypointMovement = "WaypointMovement",
     Skeleton = "Skeleton",
+    DecisionTree = "DecisionTree",
     Game = "Game"
 }
 
