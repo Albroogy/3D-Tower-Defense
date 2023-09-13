@@ -74,8 +74,8 @@ function projectileEnemyCollision(projectile: UpdateableNode, enemy: UpdateableN
         // make all enemies in a certain radius explode
     }
     if (projectileBehavior.abilities.includes(TowerAbility.Freeze)) {
-        enemyBehavior.effects.push(TowerAbility.Freeze);
-        // Make this slow down the enemies for a certain time, instead of just adding freeze to effects.z
+        // enemyBehavior.effects.push(TowerAbility.Freeze);
+        // Make this slow down the enemies for a certain time, instead of just adding freeze to effects.
     }
     
     projectile.dispose();

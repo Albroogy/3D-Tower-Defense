@@ -1,4 +1,4 @@
-import { allPressedKeys, BehaviorName, KEYS } from "../Global";
+import { allPressedKeys, BehaviorName, IN_GAME_SECOND, KEYS } from "../Global";
 import UpdateableBehavior from "../BabylonUpdateable/UpdateableBehavior";
 import UpdateableNode from "../BabylonUpdateable/UpdateableNode";
 import { CardHandBehavior } from "./CardHandBehavior";
@@ -13,6 +13,8 @@ export let gameState: GameState = GameState.Playing;
 
 export default class GameBehavior extends UpdateableBehavior {
     public static COMPONENT_ID: string = "Game";
+
+    public timeElapsedInState: number = 0;
 
     public attach(target: UpdateableNode): void {
         this._node = target;
@@ -41,8 +43,17 @@ export const onPlacingTowersActivation = (currentObject: UpdateableNode) => {
     const cardHandBehavior = currentObject.getBehaviorByName(BehaviorName.CardHand) as CardHandBehavior;
     cardHandBehavior.showAllCards();
     console.log(GameState.PlacingTowers, cardHandBehavior._cards);
+    
 }
-export const onPlacingTowersUpdate = (): GameState | undefined => {
+export const onPlacingTowersUpdate = (deltaTime: number, currentObject: UpdateableNode): GameState | undefined => {
+    // const gameBehavior = currentObject.getBehaviorByName(BehaviorName.Game) as GameBehavior;
+    // console.log(gameBehavior)
+    // gameBehavior.timeElapsedInState += 1;
+    
+    // if (allPressedKeys[KEYS.One] && gameBehavior.timeElapsedInState > IN_GAME_SECOND/2){
+    //     gameBehavior.timeElapsedInState = 0;
+    //     return GameState.Playing;
+    // }
     if (allPressedKeys[KEYS.Escape]){
         return GameState.Playing;
     }

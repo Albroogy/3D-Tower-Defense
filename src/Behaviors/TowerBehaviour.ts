@@ -117,6 +117,14 @@ export default class TowerBehavior extends UpdateableBehavior {
         }
     }
 
+    public addStats(stats: TowerAttributesType): void {
+        this.stats.attackSpeed += stats.attackSpeed;
+        this.stats.arrowCount += stats.arrowCount;
+        this.stats.range += stats.range;
+        this.stats.health += stats.health;
+        this.stats.damage += stats.damage;
+    }
+
     get towerAttackRadius(){
         return this.stats.range;
     }

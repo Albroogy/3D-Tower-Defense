@@ -38,7 +38,8 @@ export enum BehaviorName {
     CardHand = "CardHand",
     UIOverlay = "UIOverlay",
     WaypointMovement = "WaypointMovement",
-    Skeleton = "Skeleton"
+    Skeleton = "Skeleton",
+    Game = "Game"
 }
 
 export enum Tag {
@@ -147,9 +148,6 @@ export enum TowerAttribute {
     ArrowCount = "arrowCount",
     AttackRange = "range"
 }
-
-
-
 
 export enum TowerAbility {
     RapidFire = "rapidFire",
