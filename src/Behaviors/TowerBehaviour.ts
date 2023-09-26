@@ -73,8 +73,6 @@ export default class TowerBehavior extends UpdateableBehavior {
 
     public chooseTarget() {
         const findClosestByTag = (objects: Array<UpdateableNode>, tower: UpdateableNode): UpdateableNode | null => {
-            // const isObjectDisposedOf = (o: UpdateableNode) => !o.isDisposed();
-
             if (!this) {
                 return null;
             }

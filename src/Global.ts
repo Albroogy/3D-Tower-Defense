@@ -26,6 +26,8 @@ export const KEYS = {
 };
 
 
+
+
 export enum BehaviorName {
     Enemy = "Enemy",
     Projectile = "Projectile",
@@ -40,7 +42,8 @@ export enum BehaviorName {
     WaypointMovement = "WaypointMovement",
     Skeleton = "Skeleton",
     DecisionTree = "DecisionTree",
-    Game = "Game"
+    Game = "Game",
+    GiantEnemy = "GiantEnemy"
 }
 
 export enum Tag {

@@ -11,8 +11,6 @@ import StateMachineBehavior from "./Behaviors/StateMachineBehavior";
 import { UIOverlayBehavior } from "./Behaviors/UIOverlayBehavior";
 import { testingLevel } from "./Data/LevelData";
 import { ActionRunner, Blackboard, ConditionRunner, DecisionTree, NonTerminalDecisionTreeNode, TerminalDecisionTreeNode } from "./Behaviors/DecisionTreeBehaviour";
-import WaveSpawner from "./Behaviors/WaveSpawnerBehavior";
-
 
 // initialize babylon scene and engine
 export let ground: GroundMesh | undefined;

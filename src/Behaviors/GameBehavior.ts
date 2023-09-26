@@ -12,7 +12,7 @@ export enum GameState {
 export let gameState: GameState = GameState.Playing;
 
 export default class GameBehavior extends UpdateableBehavior {
-    public static COMPONENT_ID: string = "Game";
+    public static COMPONENT_ID: string = BehaviorName.Game;
 
     public timeElapsedInState: number = 0;
 
