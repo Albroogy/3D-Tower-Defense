@@ -51,7 +51,7 @@ export const onAttackingDeactivation = () => {
 }
 
 const CheckSmallWaveIndex: ConditionRunner = (board: Blackboard) => inRangeOfTower() == true;
-const arrivedNextToTower: ActionRunner = (boardv: Blackboard) => gameState = GiantState.Attacking;
+const arrivedNextToTower: ActionRunner = (board: Blackboard) => gameState = GiantState.Attacking;
 
 const root = new NonTerminalDecisionTreeNode();
 const actionNode1 = new TerminalDecisionTreeNode();
