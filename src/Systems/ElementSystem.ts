@@ -21,7 +21,7 @@ export default class CollisionSystem {
               case ElementType.Air:
                 multiplier = 0.5; // Air resists Earth
                 break;
-              case ElementType.Metal:
+              case ElementType.Earth:
                 multiplier = 2; // Metal is strong against Earth
                 break;
               default:
